@@ -3,9 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "apogee": "git+ssh://git@github.com/rissem/bolide.git",
+    "bolide": "git+ssh://git@github.com/rissem/bolide.git",
     "azkaban": "git+ssh://git@github.com/rissem/azkaban.git",
-    "dementor": "git+ssh://git@github.com/rissem/dementor.git"
+    "dementor": "git+ssh://git@github.com/rissem/dementor.git",
+    "apogee": "git+ssh://git@github.com/rissem/apogee.git"
   },
   "devDependencies": {
     "mocha": "~1.7.0",
