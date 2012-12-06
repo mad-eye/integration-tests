@@ -1,0 +1,16 @@
+{
+  "name": "integration-tests",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "apogee": "git+ssh://git@github.com/rissem/bolide.git",
+    "azkaban": "git+ssh://git@github.com/rissem/azkaban.git"
+  },
+  "devDependencies": {
+    "mocha": "~1.7.0",
+    "node-dev": "~0.2.8",
+    "request": "~2.12.0",
+    "sinon": "~1.5.2",
+    "chai": "~1.4.0"
+  }
+}
