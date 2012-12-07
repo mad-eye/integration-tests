@@ -6,7 +6,8 @@
     "bolide": "git+ssh://git@github.com/rissem/bolide.git",
     "azkaban": "git+ssh://git@github.com/rissem/azkaban.git",
     "dementor": "git+ssh://git@github.com/rissem/dementor.git",
-    "apogee": "git+ssh://git@github.com/rissem/apogee.git"
+    "apogee": "git+ssh://git@github.com/rissem/apogee.git",
+    "madeye-common": "git+ssh://git@github.com/jagill/madeye-common.git"
   },
   "devDependencies": {
     "mocha": "~1.7.0",
