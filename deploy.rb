@@ -7,15 +7,14 @@ class Deployer
   attr_accessor :is_ec2, :is_vagrant
 
   def deploy
-    `npm install`
     instances = create_instances
     instances.each do |instance|
       instance.create_deploy_directory
-      instance.push_module "azkaban"
-      instance.push_module "bolide"
+      instance.add_projects
       instance.push_apogee
     end
     instances.each do |instance|
+      instance.set_current
       instance.run_services
     end
   end
@@ -49,12 +48,22 @@ class Deployer
       cmd "mkdir #{deploy_directory}"
     end
 
+    def add_projects
+      cmd "git clone git@github.com:mad-eye/integration-tests.git #{deploy_directory}"
+      cmd "cd #{deploy_directory} && npm install"
+    end
+
     def cmd(command)
       puts "RUNNING ssh #{user}@#{hostname} \"#{command}\""
       `ssh #{user}@#{hostname} "#{command}"`
     end
 
+    #probably should delete this..
     def push_module(node_module)
+      #HACK don't understand why madeye-common isn't being picked up here..
+      if node_module == "azkaban"
+        Dir.chdir("node_modules/#{node_module}") {`npm install madeye-common`}
+      end
       `zip -r #{node_module}.zip node_modules/#{node_module}`
       zipped_module = "#{node_module}.zip"
       puts "running scp #{zipped_module} #{user}@#{hostname}:#{deploy_directory}"
@@ -65,18 +74,24 @@ class Deployer
     end
 
     def push_apogee
-      #create meteor bundle
-      Dir.chdir("node_modules/apogee") do
-        results = `mrt bundle /tmp/apogee.tar.gz`
-        puts "results are #{results}"
-      end
-      `scp /tmp/apogee.tar.gz #{user}@#{hostname}:#{deploy_directory}`
-      cmd "cd #{deploy_directory} && tar -xf apogee.tar.gz"
-      cmd "rm #{deploy_directory}/apogee.tar.gz"
+      puts cmd "cd #{deploy_directory}/node_modules/apogee && mrt bundle /tmp/apogee.tar.gz"
+      puts cmd "cd #{deploy_directory} && tar -xf /tmp/apogee.tar.gz"
+      cmd "rm /tmp/apogee.tar.gz"
+    end
+
+    def set_current
+      cmd "rm current-deploy"
+      puts cmd "ln -s #{deploy_directory} current-deploy"
     end
 
     def run_services
-      puts "running services"
+      cmd "sudo stop azkaban"
+      cmd "sudo stop bolide"
+      cmd "sudo stop apogee"
+
+      cmd "sudo start azkaban"
+      cmd "sudo start bolide"
+      cmd "sudo start apogee"
     end
   end
 
@@ -94,7 +109,7 @@ class Deployer
 end
 
 #this bock is only called when the progrma is invoked from the command line
-if /deploy\.rb/ =~ $PROGRAM_NAME 
+if /deploy\.rb/ =~ $PROGRAM_NAME
   deployer = Deployer.new
   OptionParser.new do |opts|
     opts.banner = "Usage: deploy.rb [options]"
