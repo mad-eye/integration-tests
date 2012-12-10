@@ -7,7 +7,7 @@ Vagrant::Config.run do |config|
 
   config.vm.define :frankenstein do |frankenstein_config|
     frankenstein_config.vm.network :hostonly, "192.168.1.11"
-    frankenstein_config.vm.box = "precise64"
+    frankenstein_config.vm.box = "frankenstein"
     frankenstein_config.vm.box_url = "https://s3-us-west-1.amazonaws.com/madeye-vagrant-boxes/package.box"
   end
 end
