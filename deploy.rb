@@ -35,7 +35,7 @@ class Deployer
   end
 
   def create_ec2_instances
-    if branch == "origin/head"
+    if branch == "origin/HEAD"
       [EC2Instance.new("madeye.io")]
     elsif branch == "origin/develop"
       [EC2Instance.new("staging.madeye.io")]
