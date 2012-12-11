@@ -7,7 +7,7 @@
     "azkaban": "git+ssh://git@github.com/rissem/azkaban.git",
     "madeye": "git+ssh://git@github.com/rissem/dementor.git",
     "apogee": "git+ssh://git@github.com/rissem/apogee.git",
-    "madeye-common": "git+ssh://git@github.com/jagill/madeye-common.git"
+    "madeye-common": "git+ssh://git@github.com/mad-eye/madeye-common.git"
   },
   "devDependencies": {
     "mocha": "~1.7.0",
