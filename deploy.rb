@@ -4,7 +4,7 @@ require "optparse"
 require "vagrant"
 
 class Deployer
-  attr_accessor :is_ec2, :is_vagrant
+  attr_accessor :is_ec2, :is_vagrant, :branch
 
   def deploy
     instances = create_instances
@@ -35,7 +35,13 @@ class Deployer
   end
 
   def create_ec2_instances
-    [EC2Instance.new("10.212.77.213")]
+    if branch == "master"
+      [EC2Instance.new("madeye.io")]
+    elsif branch == "develop"
+      [EC2Instance.new("staging.madeye.io")]
+    else
+      abort "EXITING Do not know where to deploy branch '#{branch}'"
+    end
   end
 
   class Instance < Struct.new(:hostname, :instance_id)
@@ -60,7 +66,7 @@ class Deployer
 
     #probably should delete this..
     def push_module(node_module)
-      #HACK don't understand why madeye-common isn't being picked up here..
+      #TODO don't understand why madeye-common isn't being picked up here..
       if node_module == "azkaban"
         Dir.chdir("node_modules/#{node_module}") {`npm install madeye-common`}
       end
@@ -108,7 +114,7 @@ class Deployer
   end
 end
 
-#this bock is only called when the progrma is invoked from the command line
+#this block is only called when the program is invoked from the command line
 if /deploy\.rb/ =~ $PROGRAM_NAME
   deployer = Deployer.new
   OptionParser.new do |opts|
@@ -116,6 +122,7 @@ if /deploy\.rb/ =~ $PROGRAM_NAME
 #    opts.on("-v", "--verbose", "Verbose output") {|v| deployer.verbose = true}
     opts.on("--vagrant", "Use Vagrant") {|v| deployer.is_vagrant = true}
     opts.on("--ec2", "Use EC2") {|v| deployer.is_ec2 = true}
+    opts.on("--branch [BRANCH]", String, "Branch being deployed (developer branch -> staging, master -> prod)") {|branch| deployer.branch = branch}
     opts.on("--reset", "(Vagrant only) destroy previous vagrant instances") do |v|
       deployer.is_ec2 = true
     end
