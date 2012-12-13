@@ -10,8 +10,8 @@ class Deployer
     instances = create_instances
     instances.each do |instance|
       instance.create_deploy_directory
-      instance.add_projects
-      instance.push_apogee
+      instance.push_apps
+      instance.setup_apogee
     end
     instances.each do |instance|
       instance.set_current
@@ -35,7 +35,7 @@ class Deployer
   end
 
   def create_ec2_instances
-    if branch == "origin/HEAD"
+    if branch == "origin/master"
       [EC2Instance.new("madeye.io")]
     elsif branch == "origin/develop"
       [EC2Instance.new("staging.madeye.io")]
@@ -54,33 +54,28 @@ class Deployer
       cmd "mkdir #{deploy_directory}"
     end
 
-    def add_projects
-      cmd "git clone git@github.com:mad-eye/integration-tests.git #{deploy_directory}"
-      cmd "cd #{deploy_directory} && npm install"
-    end
-
     def cmd(command)
       puts "RUNNING ssh #{user}@#{hostname} \"#{command}\""
       `ssh #{user}@#{hostname} "#{command}"`
     end
 
-    #probably should delete this..
-    def push_module(node_module)
-      #TODO don't understand why madeye-common isn't being picked up here..
-      if node_module == "azkaban"
-        Dir.chdir("node_modules/#{node_module}") {`npm install madeye-common`}
-      end
-      `zip -r #{node_module}.zip node_modules/#{node_module}`
-      zipped_module = "#{node_module}.zip"
-      puts "running scp #{zipped_module} #{user}@#{hostname}:#{deploy_directory}"
-      `scp #{zipped_module} #{user}@#{hostname}:#{deploy_directory}`
-      cmd "cd #{deploy_directory} && unzip #{zipped_module}"
-      `rm #{zipped_module}`
-      cmd "rm #{deploy_directory}/#{zipped_module}"
+    def push_apps
+      ["bolide", "azkaban", "apogee"].each {|app| push_app(app)}
     end
 
-    def push_apogee
-      puts cmd "cd #{deploy_directory}/node_modules/apogee && mrt bundle /tmp/apogee.tar.gz"
+    def push_app(app)
+      zippedApp = "#{app}.zip"
+      `zip -r #{zippedApp} #{app}`
+      puts "running scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}"
+      `scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}`
+      cmd "cd #{deploy_directory} && unzip #{zippedApp}"
+      `rm #{zippedApp}`
+      cmd "rm #{deploy_directory}/#{zippedApp}"
+      cmd "cd #{deploy_directory}/#{app} && npm install" unless app == "apogee"
+    end
+
+    def setup_apogee
+      puts cmd "cd #{deploy_directory}/apogee && mrt bundle /tmp/apogee.tar.gz"
       puts cmd "cd #{deploy_directory} && tar -xf /tmp/apogee.tar.gz"
       cmd "rm /tmp/apogee.tar.gz"
     end
