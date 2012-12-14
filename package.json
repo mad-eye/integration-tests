@@ -2,13 +2,14 @@
   "name": "integration-tests",
   "version": "0.0.1",
   "private": true,
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "mocha": "~1.7.0",
     "node-dev": "~0.2.8",
     "request": "~2.12.0",
     "sinon": "~1.5.2",
-    "chai": "~1.4.0"
+    "chai": "~1.4.0",
+    "handlebars": "~1.0.7",
+    "coffee-script": "~1.4.0"
   }
 }
