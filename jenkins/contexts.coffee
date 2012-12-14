@@ -1,11 +1,11 @@
 fs = require 'fs'
 
-apogeeScript = fs.readFileSync 'apogeeBuild.sh', 'utf-8'
-azkabanScript = fs.readFileSync 'azkabanBuild.sh', 'utf-8'
-bolideScript = fs.readFileSync 'bolideBuild.sh', 'utf-8'
-dementorScript = fs.readFileSync 'dementorBuild.sh', 'utf-8'
-integrationScript = fs.readFileSync 'integrationBuild.sh', 'utf-8'
-commonScript = fs.readFileSync 'commonBuild.sh', 'utf-8'
+apogeeScript = fs.readFileSync 'scripts/apogee.sh', 'utf-8'
+azkabanScript = fs.readFileSync 'scripts/azkaban.sh', 'utf-8'
+bolideScript = fs.readFileSync 'scripts/bolide.sh', 'utf-8'
+dementorScript = fs.readFileSync 'scripts/dementor.sh', 'utf-8'
+integrationScript = fs.readFileSync 'scripts/integration.sh', 'utf-8'
+commonScript = fs.readFileSync 'scripts/common.sh', 'utf-8'
 
 contexts = {}
 
