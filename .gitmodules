@@ -1,12 +1,12 @@
 [submodule "bolide"]
 	path = bolide
-	url = git@github.com:rissem/bolide.git
+	url = git@github.com:mad-eye/bolide.git
 [submodule "azkaban"]
 	path = azkaban
-	url = git@github.com:rissem/azkaban.git
+	url = git@github.com:mad-eye/azkaban.git
 [submodule "dementor"]
 	path = dementor
-	url = git@github.com:rissem/dementor.git
+	url = git@github.com:mad-eye/dementor.git
 [submodule "apogee"]
 	path = apogee
-	url = git@github.com:rissem/apogee.git
+	url = git@github.com:mad-eye/apogee.git
