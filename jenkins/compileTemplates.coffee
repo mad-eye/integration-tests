@@ -2,7 +2,7 @@ fs = require 'fs'
 Handlebars = require 'handlebars'
 contexts = require './contexts'
 
-source = fs.readFileSync 'config.xml', 'utf-8'
+source = fs.readFileSync 'config.xml.hbs', 'utf-8'
 template = Handlebars.compile source
 Handlebars.registerHelper 'csv', (list) ->
   list.join ", "
