@@ -7,6 +7,7 @@ template = Handlebars.compile source
 Handlebars.registerHelper 'csv', (list) ->
   list.join ", "
 
+fs.mkdirSync "jenkins_templates" unless fs.existsSync "jenkins_templates"
 for job, context of contexts
   output = template(context)
   dir = "jenkins_templates/#{job}"
