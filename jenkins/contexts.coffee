@@ -27,64 +27,64 @@ contexts['madeye-common_develop'] =
   childProjects: ['apogee_develop', 'azkaban_develop', 'bolide_develop', 'dementor_develop']
 
 contexts.apogee_master =
-  projectUrl: 'https://github.com/rissem/apogee/'
-  gitUrl: 'git@github.com:rissem/apogee.git'
+  projectUrl: 'https://github.com/mad-eye/apogee/'
+  gitUrl: 'git@github.com:mad-eye/apogee.git'
   branch: 'origin/master'
   refSpec: 'master'
   script: apogeeScript
   childProjects: ['integration-tests_master']
 
 contexts.apogee_develop =
-  projectUrl: 'https://github.com/rissem/apogee/'
-  gitUrl: 'git@github.com:rissem/apogee.git'
+  projectUrl: 'https://github.com/mad-eye/apogee/'
+  gitUrl: 'git@github.com:mad-eye/apogee.git'
   branch: 'origin/develop'
   refSpec: 'develop'
   script: apogeeScript
   childProjects: ['integration-tests_develop']
 
 contexts.azkaban_master =
-  projectUrl: 'https://github.com/rissem/azkaban/'
-  gitUrl: 'git@github.com:rissem/azkaban.git'
+  projectUrl: 'https://github.com/mad-eye/azkaban/'
+  gitUrl: 'git@github.com:mad-eye/azkaban.git'
   branch: 'origin/master'
   refSpec: 'master'
   script: azkabanScript
   childProjects: ['integration-tests_master']
 
 contexts.azkaban_develop =
-  projectUrl: 'https://github.com/rissem/azkaban/'
-  gitUrl: 'git@github.com:rissem/azkaban.git'
+  projectUrl: 'https://github.com/mad-eye/azkaban/'
+  gitUrl: 'git@github.com:mad-eye/azkaban.git'
   branch: 'origin/develop'
   refSpec: 'develop'
   script: azkabanScript
   childProjects: ['integration-tests_develop']
 
 contexts.bolide_master =
-  projectUrl: 'https://github.com/rissem/bolide/'
-  gitUrl: 'git@github.com:rissem/bolide.git'
+  projectUrl: 'https://github.com/mad-eye/bolide/'
+  gitUrl: 'git@github.com:mad-eye/bolide.git'
   branch: 'origin/master'
   refSpec: 'master'
   script: bolideScript
   childProjects: ['integration-tests_master']
 
 contexts.bolide_develop =
-  projectUrl: 'https://github.com/rissem/bolide/'
-  gitUrl: 'git@github.com:rissem/bolide.git'
+  projectUrl: 'https://github.com/mad-eye/bolide/'
+  gitUrl: 'git@github.com:mad-eye/bolide.git'
   branch: 'origin/develop'
   refSpec: 'develop'
   script: bolideScript
   childProjects: ['integration-tests_develop']
 
 contexts.dementor_master =
-  projectUrl: 'https://github.com/rissem/dementor/'
-  gitUrl: 'git@github.com:rissem/dementor.git'
+  projectUrl: 'https://github.com/mad-eye/dementor/'
+  gitUrl: 'git@github.com:mad-eye/dementor.git'
   branch: 'origin/master'
   refSpec: 'master'
   script: dementorScript
   childProjects: ['integration-tests_master']
 
 contexts.dementor_develop =
-  projectUrl: 'https://github.com/rissem/dementor/'
-  gitUrl: 'git@github.com:rissem/dementor.git'
+  projectUrl: 'https://github.com/mad-eye/dementor/'
+  gitUrl: 'git@github.com:mad-eye/dementor.git'
   branch: 'origin/develop'
   refSpec: 'develop'
   script: dementorScript
@@ -107,4 +107,3 @@ contexts['integration-tests_develop'] =
   description: 'test that all apogee, azkaban, bolide, and dementor are all working together'
 
 module.exports = contexts
-  
