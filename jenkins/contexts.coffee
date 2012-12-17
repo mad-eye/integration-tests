@@ -16,7 +16,6 @@ contexts['madeye-common_master'] =
   branch: 'origin/master'
   refSpec: '+refs/heads/master:refs/remotes/origin/master'
   script: commonScript
-  childProjects: ['apogee_master', 'azkaban_master', 'bolide_master', 'dementor_master']
 
 contexts['madeye-common_develop'] =
   projectUrl: 'https://github.com/mad-eye/madeye-common/'
@@ -24,7 +23,6 @@ contexts['madeye-common_develop'] =
   branch: 'origin/develop'
   refSpec: '+refs/heads/develop:refs/remotes/origin/develop'
   script: commonScript
-  childProjects: ['apogee_develop', 'azkaban_develop', 'bolide_develop', 'dementor_develop']
 
 contexts.apogee_master =
   projectUrl: 'https://github.com/mad-eye/apogee/'
