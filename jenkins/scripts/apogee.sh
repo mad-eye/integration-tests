@@ -1,5 +1,6 @@
 cd .madeye-common
-jake compile
+npm install
+node_modules/.bin/jake compile
 cd ..
 METEOR_CLIENT_TEST=true mrt &> /tmp/mrtLog &
 sleep 60
