@@ -9,6 +9,5 @@ export MADEYE_APOGEE_PORT=3000
 export MADEYE_BOLIDE_HOST=localhost
 export MADEYE_BOLIDE_PORT=3003
 
-npm install
-PATH="$PATH:./bin"
-run_tests
+bin/init
+bin/run_tests

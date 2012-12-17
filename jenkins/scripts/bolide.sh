@@ -1,2 +1,2 @@
-npm install
+bin/init
 bin/run_tests
