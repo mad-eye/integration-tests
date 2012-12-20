@@ -12,16 +12,16 @@ startDementor = (callback)->
   dementor.stderr.on "data", (data)->
     util.print "DEMENTOR STDERR: #{data}"
   dementor.on "exit", (code)->
-    console.log "Dementor exited with status #{code}"
+    # console.log "Dementor exited with status #{code}"
 
 #after starting dementor run casperjs against the madeye server
 startDementor (projectUrl)->
-  console.log "testing project at #{projectUrl}"
-  casperJs = spawn "casperjs", ["tests/happyPathTest.coffee", projectUrl]
+  casperJs = spawn "casperjs", ["test", "tests/happyPathTest.coffee", projectUrl]
   casperJs.stdout.on "data", (data)->
     console.log "CASPERJS STDOUT #{data}"
   casperJs.stderr.on "data", (data)->
     console.log "CASPERJS STDERR #{data}"
   casperJs.on "exit", (code)->
-    console.log "casper exited with status #{code}"
+    # console.log "casper exited with #{code}"
     dementor.kill()
+    process.exit(code)
