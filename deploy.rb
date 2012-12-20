@@ -65,7 +65,6 @@ class Deployer
         abort "FAILURE RUNNING #{remote_cmd}"
       end
       puts "RUNNING ssh #{user}@#{hostname} \"#{command}\""
-      `ssh #{user}@#{hostname} "#{command}"`
     end
 
     def push_apps
@@ -101,9 +100,9 @@ class Deployer
     end
 
     def run_services
-      cmd "sudo stop azkaban"
-      cmd "sudo stop bolide"
-      cmd "sudo stop apogee"
+      cmd "sudo stop azkaban", true
+      cmd "sudo stop bolide", true
+      cmd "sudo stop apogee", true
 
       cmd "sudo start azkaban"
       cmd "sudo start bolide"
