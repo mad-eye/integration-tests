@@ -57,14 +57,14 @@ class Deployer
       cmd "mkdir #{deploy_directory}"
     end
 
-    def cmd(command)
+    def cmd(command, ignore_failure=false)
       remote_cmd = "ssh #{user}@#{hostname} \"#{command}\""
       puts "RUNNING #{remote_cmd}"
-      `#{remote_cmd}`
+      result = `#{remote_cmd}`
       if $?.exitstatus != 0
-        abort "FAILURE RUNNING #{remote_cmd}"
+        abort "FAILURE RUNNING #{remote_cmd}" unless ignore_failure
       end
-      puts "RUNNING ssh #{user}@#{hostname} \"#{command}\""
+      return result
     end
 
     def push_apps
