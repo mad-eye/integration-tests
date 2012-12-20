@@ -1,5 +1,7 @@
 #! /usr/bin/env ruby
 
+#TODO create symlink to last release
+
 require "optparse"
 require "vagrant"
 
@@ -10,6 +12,7 @@ class Deployer
     instances = create_instances
     instances.each do |instance|
       instance.create_deploy_directory
+      instance.set_last_release
       instance.push_apps
       instance.setup_apogee
     end
@@ -55,12 +58,8 @@ class Deployer
     end
 
     def cmd(command)
-      remote_cmd = "ssh #{user}@#{hostname} \"#{command}\""
-      puts "RUNNING #{remote_cmd}"
-      `#{remote_cmd}`
-      if $?.exitstatus != 0
-        abort "FAILURE RUNNING #{remote_cmd}"
-      end
+      puts "RUNNING ssh #{user}@#{hostname} \"#{command}\""
+      `ssh #{user}@#{hostname} "#{command}"`
     end
 
     def push_apps
@@ -75,6 +74,7 @@ class Deployer
       cmd "cd #{deploy_directory} && unzip #{zippedApp}"
       `rm #{zippedApp}`
       cmd "rm #{deploy_directory}/#{zippedApp}"
+      cmd "cd #{deploy_directory}/#{app} && npm install .madeye-common" if app == "azkaban"
       cmd "cd #{deploy_directory}/#{app} && npm install" unless app == "apogee"
     end
 
@@ -87,6 +87,11 @@ class Deployer
     def set_current
       cmd "rm current-deploy"
       puts cmd "ln -s #{deploy_directory} current-deploy"
+    end
+
+    def set_last_release
+      cmd "rm last-deploy"
+      puts cmd "ln -s #{deploy_directory} last-deploy"      
     end
 
     def run_services
