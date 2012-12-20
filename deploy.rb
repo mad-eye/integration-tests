@@ -55,8 +55,12 @@ class Deployer
     end
 
     def cmd(command)
-      puts "RUNNING ssh #{user}@#{hostname} \"#{command}\""
-      `ssh #{user}@#{hostname} "#{command}"`
+      remote_cmd = "ssh #{user}@#{hostname} \"#{command}\""
+      puts "RUNNING #{remote_cmd}"
+      `#{remote_cmd}`
+      if $?.exitstatus != 0
+        abort "FAILURE RUNNING #{remote_cmd}"
+      end
     end
 
     def push_apps
