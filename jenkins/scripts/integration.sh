@@ -1,3 +1,4 @@
+set -x
 git checkout $GIT_BRANCH
 sh $WORKSPACE/bin/init.sh
 for dir in apogee azkaban bolide dementor; do
