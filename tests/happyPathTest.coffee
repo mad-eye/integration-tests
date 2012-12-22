@@ -17,7 +17,7 @@ url = casper.cli.args[1]
 console.log "opening url #{url}"
 
 casper.start url, ->
-  @wait 1000, ->
+  @wait 10000, ->
     @test.assertExists "#projectName"
 
     projectNameHTML = @getHTML "#projectName"
