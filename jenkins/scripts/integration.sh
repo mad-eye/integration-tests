@@ -7,4 +7,5 @@ done
 cd $WORKSPACE && ./deploy.rb --ec2 --branch=$GIT_BRANCH
 #RUN TESTS HERE
 git commit -a -m "Updating submodule commits.  Automated by Jenkins." || echo "No changes found."
-git push
+#TODO: Re-enable once we exit on error.
+#git push
