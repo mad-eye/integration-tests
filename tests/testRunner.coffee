@@ -12,6 +12,9 @@ startDementor = (callback)->
   dementor.stderr.on "data", (data)->
     util.print "DEMENTOR STDERR: #{data}"
   dementor.on "exit", (code)->
+    if code !=0
+      console.error "dementor exited with non-zero status code"
+      process.exit(1)
     # console.log "Dementor exited with status #{code}"
 
 #after starting dementor run casperjs against the madeye server
