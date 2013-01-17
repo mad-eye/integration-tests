@@ -8,6 +8,7 @@ export MADEYE_APOGEE_HOST=localhost
 export MADEYE_APOGEE_PORT=3000
 export MADEYE_BOLIDE_HOST=localhost
 export MADEYE_BOLIDE_PORT=3003
+export MADEYE_HOME=$WORKSPACE
 
 bin/init
 bin/run_tests
