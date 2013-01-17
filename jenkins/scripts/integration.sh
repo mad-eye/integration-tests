@@ -22,6 +22,7 @@ export MADEYE_HTTP_HOST=staging.madeye.io
 export MADEYE_HTTP_PORT=4004
 export MADEYE_APOGEE_HOST=staging.madeye.io
 export MADEYE_APOGEE_PORT=3000
+export MADEYE_HOME=$WORKSPACE
 
 coffee tests/testRunner.coffee
 
