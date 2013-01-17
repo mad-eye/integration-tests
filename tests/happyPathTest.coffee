@@ -12,11 +12,12 @@
 # Its critical to include assert statments that uniquely identify the assertion
 # as casperjs stacktraces all point to line :-/ TODO consider casper alternatives
 
-url = casper.cli.args[1]
-
-console.log "opening url #{url}"
+system = require('system'); 
+url = system.env.PROJECT_URL 
+console.log "URL = #{url}"
 
 casper.start url, ->
+  casper = require('casper').create()
   @wait 5000, ->
     @test.assertExists "#projectName"
 

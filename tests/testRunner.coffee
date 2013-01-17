@@ -19,7 +19,8 @@ startDementor = (callback)->
 
 #after starting dementor run casperjs against the madeye server
 startDementor (projectUrl)->
-  casperJs = spawn "casperjs", ["test", "tests/happyPathTest.coffee", projectUrl]
+  process.env.PROJECT_URL = projectUrl
+  casperJs = spawn "casperjs", ["test", "tests/happyPathTest.coffee"]
   casperJs.stdout.on "data", (data)->
     console.log "CASPERJS STDOUT #{data}"
   casperJs.stderr.on "data", (data)->
