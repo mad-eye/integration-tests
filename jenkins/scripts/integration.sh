@@ -26,5 +26,5 @@ export MADEYE_HOME=$WORKSPACE
 
 coffee tests/testRunner.coffee
 
-#git commit -a -m "Updating submodule commits.  Automated by Jenkins." || echo "No changes found."
-#git push
+git commit -a -m "Updating submodule commits.  Automated by Jenkins." || echo "No changes found."
+git push
