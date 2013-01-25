@@ -4,7 +4,7 @@ util = require "util"
 dementor = null
 startDementor = (callback)->
   #TODO should be resetting this directory
-  dementor = spawn "../../dementor/bin/madeye", null, {cwd: "tests/fake-project"}
+  dementor = spawn "../../dementor/bin/madeye.js", null, {cwd: "tests/fake-project"}
   dementor.stdout.on "data", (data)->
     if match = /http[-\w\d\/:\.]*/.exec(data)
       callback match[0]
@@ -12,11 +12,15 @@ startDementor = (callback)->
   dementor.stderr.on "data", (data)->
     util.print "DEMENTOR STDERR: #{data}"
   dementor.on "exit", (code)->
+    if code !=0
+      console.error "dementor exited with non-zero status code"
+      process.exit(1)
     # console.log "Dementor exited with status #{code}"
 
 #after starting dementor run casperjs against the madeye server
 startDementor (projectUrl)->
-  casperJs = spawn "casperjs", ["test", "tests/happyPathTest.coffee", projectUrl]
+  process.env.PROJECT_URL = projectUrl
+  casperJs = spawn "casperjs", ["test", "tests/happyPathTest.coffee"]
   casperJs.stdout.on "data", (data)->
     console.log "CASPERJS STDOUT #{data}"
   casperJs.stderr.on "data", (data)->
