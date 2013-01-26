@@ -4,12 +4,13 @@ set -e
 
 PUBLIC_DNS=$1
 
-packages="emacs23-nox"
+packages="emacs23-nox git htop"
 cmd="ssh -i $HOME/.ssh/horcrux.pem ubuntu@$PUBLIC_DNS "
-
+rsync=rsync\ -uv\ -e\ "ssh -i $HOME/.ssh/horcrux.pem"
 #initial setup
 $cmd "sudo apt-get -y install $packages"
 $cmd "sudo apt-get -y update"
+$cmd "mkdir tmp" #HACK: Make this dir with correct permissions before someone else does.
 $cmd "sudo mkdir -p /etc/apt/sources.list.d"
 
 #Installing Node
@@ -18,8 +19,11 @@ $cmd "sudo add-apt-repository -y ppa:chris-lea/node.js" # Up-to-date node repo
 $cmd "sudo apt-get -y update"
 $cmd "sudo apt-get -y install nodejs npm"
 
-#Installing Mongo
+#Npm packages
+$cmd "sudo npm install -g coffee-script meteorite"
+$cmd "sudo apt-get -y install zip"
 
+#Installing Mongo
 $cmd "sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10"
 # the 10gen repository.
 $cmd "echo \"deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen\" | sudo tee /etc/apt/sources.list.d/10gen.list"
@@ -33,7 +37,21 @@ $cmd "wget -q -O - http://www.dotdeb.org/dotdeb.gpg | sudo apt-key add -"
 $cmd "sudo apt-get -y update"
 $cmd "sudo apt-get -y install redis-server"
 
-#Npm packages
-$cmd "sudo npm install -g coffee-script"
-$cmd "sudo apt-get -y install zip"
+#install etc/init scripts
+$rsync etcinit/*.conf ubuntu@$PUBLIC_DNS:/tmp
+$cmd "sudo mv /tmp/apogee.conf /tmp/azkaban.conf /tmp/bolide.conf /etc/init/"
 
+#install nginx
+$cmd "sudo apt-get -y install nginx"
+$rsync nginx/production ubuntu@$PUBLIC_DNS:/tmp
+$cmd "sudo mv /tmp/production /etc/nginx/sites-available/"
+$cmd "sudo rm /etc/nginx/sites-enabled/production || echo \"No production symlink\"" 
+$cmd "sudo ln -s /etc/nginx/sites-available/production /etc/nginx/sites-enabled/production"
+$cmd "sudo rm /etc/nginx/sites-enabled/default || echo \"No default site\""
+$cmd "sudo rm /etc/nginx/sites-available/default || echo \"No default site\""
+$cmd "sudo /etc/init.d/nginx start"
+
+#TODO: Install nginx for a proxy from :80 to :3000
+#TODO: Make nginx startup automatically
+#TODO: Still might need to a do a git clone on the machine to accept github's rsa key.
+#XXX: mrt was failing after this setup, we had to do "rm -rf /home/ubuntu/.meteorite" to fix it

@@ -6,7 +6,7 @@ require "optparse"
 require "vagrant"
 
 class Deployer
-  attr_accessor :is_ec2, :is_vagrant, :branch
+  attr_accessor :is_ec2, :is_vagrant, :branch, :server
 
   def deploy
     instances = create_instances
@@ -38,11 +38,14 @@ class Deployer
   end
 
   def create_ec2_instances
-    if branch == "origin/master"
+    if server
+      [EC2Instance.new(server)]
+    elsif branch == "origin/master"
       [EC2Instance.new("madeye.io")]
     elsif branch == "origin/develop"
       [EC2Instance.new("staging.madeye.io")]
     else
+      #TODO: Make this message more informative for server cases.
       abort "EXITING Do not know where to deploy branch '#{branch}'"
     end
   end
@@ -85,17 +88,19 @@ class Deployer
 
     def setup_apogee
       puts cmd "cd #{deploy_directory}/apogee && mrt bundle /tmp/apogee.tar.gz"
+      #HACK: Terrible hack.  but the first time we run it it cleans some things up.
+      puts cmd "cd #{deploy_directory}/apogee && mrt bundle /tmp/apogee.tar.gz"
       puts cmd "cd #{deploy_directory} && tar -xf /tmp/apogee.tar.gz"
       cmd "rm /tmp/apogee.tar.gz"
     end
 
     def set_current
-      cmd "rm current-deploy"
+      cmd "rm current-deploy || echo \"No current-deploy dir.\""
       puts cmd "ln -s #{deploy_directory} current-deploy"
     end
 
     def set_last_release
-      cmd "rm last-deploy"
+      cmd "rm last-deploy || echo \"No last deploy directory\""
       puts cmd "ln -s #{deploy_directory} last-deploy"      
     end
 
@@ -131,6 +136,7 @@ if /deploy\.rb/ =~ $PROGRAM_NAME
 #    opts.on("-v", "--verbose", "Verbose output") {|v| deployer.verbose = true}
     opts.on("--vagrant", "Use Vagrant") {|v| deployer.is_vagrant = true}
     opts.on("--ec2", "Use EC2") {|v| deployer.is_ec2 = true}
+    opts.on("--server [SERVER]", "Specify Server", String, "Server to deploy to") {|server| deployer.server = server}
     opts.on("--branch [BRANCH]", String, "Branch being deployed (developer branch -> staging, master -> prod)") {|branch| deployer.branch = branch}
     opts.on("--reset", "(Vagrant only) destroy previous vagrant instances") do |v|
       deployer.is_ec2 = true
