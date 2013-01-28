@@ -24,6 +24,7 @@ export MADEYE_APOGEE_HOST=staging.madeye.io
 export MADEYE_APOGEE_PORT=3000
 export MADEYE_HOME=$WORKSPACE
 
+sleep 10
 coffee tests/testRunner.coffee
 
 git commit -a -m "Updating submodule commits.  Automated by Jenkins." || echo "No changes found."
