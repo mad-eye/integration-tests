@@ -8,7 +8,7 @@ export MADEYE_APOGEE_HOST=localhost
 export MADEYE_APOGEE_PORT=3000
 export MADEYE_BOLIDE_HOST=localhost
 export MADEYE_BOLIDE_PORT=3003
-export MADEYE_LOGGLY_AZKABAN_ID=cb563a0e-fd2d-4340-85bf-ae2a2e811cc7
+export MADEYE_LOGGLY_AZKABAN_KEY=cb563a0e-fd2d-4340-85bf-ae2a2e811cc7
 
 bin/init
 bin/run_tests
