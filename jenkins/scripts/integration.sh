@@ -16,14 +16,22 @@ cd $WORKSPACE
 
 cd $WORKSPACE && ./deploy.rb --ec2 --branch=$GIT_BRANCH
 
-export MADEYE_BC_HOST=staging.madeye.io
-export MADEYE_BC_PORT=4321
-export MADEYE_HTTP_HOST=staging.madeye.io
-export MADEYE_HTTP_PORT=4004
-export MADEYE_APOGEE_HOST=staging.madeye.io
-export MADEYE_APOGEE_PORT=3000
 export MADEYE_HOME=$WORKSPACE
-export MADEYE_LOGGLY_AZKABAN_KEY=cb563a0e-fd2d-4340-85bf-ae2a2e811cc7
+
+export MADEYE_APOGEE_PORT=3000
+export MADEYE_APOGEE_URL="http://staging.madeye.io:"$MADEYE_APOGEE_PORT
+export MADEYE_AZKABAN_PORT=4004
+export MADEYE_AZKABAN_HOST="staging.madeye.io:"$MADEYE_AZKABAN_PORT
+export MADEYE_AZKABAN_URL="http://"$MADEYE_AZKABAN_HOST
+export MADEYE_BOLIDE_PORT=3003
+export MADEYE_BOLIDE_URL="http://staging.madeye.io:"$MADEYE_BOLIDE_PORT
+export MADEYE_MONGO_PORT=27017
+export MADEYE_MONGO_URL="mongodb://localhost:"$MADEYE_MONGO_PORT"/meteor"
+
+export MONGO_URL=$MADEYE_MONGO_URL
+export PORT=$MADEYE_APOGEE_PORT
+export MADEYE_KISS_METRICS_ID="9b307f5887365b1ecb4b47eb7625c69570d05b89"
+export MADEYE_LOGGLY_AZKABAN_KEY="f924ff21-2026-49e7-ab43-4a079d7d1561"
 
 sleep 10
 coffee tests/testRunner.coffee
