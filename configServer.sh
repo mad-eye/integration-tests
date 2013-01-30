@@ -2,6 +2,7 @@
 #Usage: configServer.sh SERVER_PUBLIC_DNS
 set -e
 
+#TODO: Take production/staging argument, and push the appropriate /etc/init/APP.conf scripts
 PUBLIC_DNS=$1
 
 packages="emacs23-nox git htop"
@@ -38,10 +39,12 @@ $cmd "sudo apt-get -y update"
 $cmd "sudo apt-get -y install redis-server"
 
 #install etc/init scripts
-$rsync etcinit/*.conf ubuntu@$PUBLIC_DNS:/tmp
+#TODO: This will change based on production/staging
+$rsync etcinit/production/*.conf ubuntu@$PUBLIC_DNS:/tmp
 $cmd "sudo mv /tmp/apogee.conf /tmp/azkaban.conf /tmp/bolide.conf /etc/init/"
 
 #install nginx
+#TODO: This will change based on production/staging
 $cmd "sudo apt-get -y install nginx"
 $rsync nginx/production ubuntu@$PUBLIC_DNS:/tmp
 $cmd "sudo mv /tmp/production /etc/nginx/sites-available/"
@@ -51,7 +54,6 @@ $cmd "sudo rm /etc/nginx/sites-enabled/default || echo \"No default site\""
 $cmd "sudo rm /etc/nginx/sites-available/default || echo \"No default site\""
 $cmd "sudo /etc/init.d/nginx start"
 
-#TODO: Install nginx for a proxy from :80 to :3000
 #TODO: Make nginx startup automatically
 #TODO: Still might need to a do a git clone on the machine to accept github's rsa key.
 #XXX: mrt was failing after this setup, we had to do "rm -rf /home/ubuntu/.meteorite" to fix it

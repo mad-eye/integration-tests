@@ -2,7 +2,9 @@
   "name": "integration-tests",
   "version": "0.0.1",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "underscore": "~1.4.3"
+  },
   "devDependencies": {
     "mocha": "~1.7.0",
     "request": "~2.12.0",
