@@ -46,6 +46,7 @@ $cmd "sudo apt-get -y update"
 $cmd "sudo apt-get -y install redis-server"
 
 #install etc/init scripts
+coffee etcinit/compileTemplates.coffee
 $rsync etcinit/$TYPE/*.conf ubuntu@$PUBLIC_DNS:/tmp
 $cmd "sudo mv /tmp/apogee.conf /tmp/azkaban.conf /tmp/bolide.conf /etc/init/"
 
