@@ -1,3 +1,5 @@
 node_modules
 .vagrant
 jenkins_templates/
+etcinit/production/
+etcinit/staging/

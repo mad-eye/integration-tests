@@ -103,5 +103,6 @@ contexts['integration-tests_develop'] =
   refSpec: '+refs/heads/develop:refs/remotes/origin/develop'
   script: integrationScript
   description: 'test that all apogee, azkaban, bolide, and dementor are all working together'
+  excludedRegions: ["azkaban", "apogee", "bolide", "dementor"].join "\n"
 
 module.exports = contexts
