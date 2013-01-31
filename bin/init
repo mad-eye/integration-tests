@@ -4,4 +4,5 @@ git submodule update --init --recursive
 (cd azkaban && bin/init)
 (cd bolide && bin/init)
 (cd dementor && bin/init)
+npm install -q
 

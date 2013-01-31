@@ -1,14 +1,21 @@
 #! /bin/sh
-#Usage: configServer.sh SERVER_PUBLIC_DNS
+#Usage: configServer.sh SERVER_PUBLIC_DNS SERVER_TYPE
 set -e
 
-#TODO: Take production/staging argument, and push the appropriate /etc/init/APP.conf scripts
 PUBLIC_DNS=$1
+TYPE=$2
 
-packages="emacs23-nox git htop"
+if [ -z "$PUBLIC_DNS" ] || [ -z "$TYPE" ]; then
+    echo "Usage: configServer.sh SERVER_PUBLIC_DNS SERVER_TYPE"
+    echo "SERVER_TYPE is one of 'production' or 'staging'"
+    exit 1
+fi
+
 cmd="ssh -i $HOME/.ssh/horcrux.pem ubuntu@$PUBLIC_DNS "
-rsync=rsync\ -uv\ -e\ "ssh -i $HOME/.ssh/horcrux.pem"
+rsync=rsync\ -ruv\ -e\ "ssh -i $HOME/.ssh/horcrux.pem"
+
 #initial setup
+packages="emacs23-nox git htop"
 $cmd "sudo apt-get -y install $packages"
 $cmd "sudo apt-get -y update"
 $cmd "mkdir tmp" #HACK: Make this dir with correct permissions before someone else does.
@@ -39,17 +46,16 @@ $cmd "sudo apt-get -y update"
 $cmd "sudo apt-get -y install redis-server"
 
 #install etc/init scripts
-#TODO: This will change based on production/staging
-$rsync etcinit/production/*.conf ubuntu@$PUBLIC_DNS:/tmp
+coffee etcinit/compileTemplates.coffee
+$rsync etcinit/$TYPE/*.conf ubuntu@$PUBLIC_DNS:/tmp
 $cmd "sudo mv /tmp/apogee.conf /tmp/azkaban.conf /tmp/bolide.conf /etc/init/"
 
 #install nginx
-#TODO: This will change based on production/staging
 $cmd "sudo apt-get -y install nginx"
-$rsync nginx/production ubuntu@$PUBLIC_DNS:/tmp
-$cmd "sudo mv /tmp/production /etc/nginx/sites-available/"
-$cmd "sudo rm /etc/nginx/sites-enabled/production || echo \"No production symlink\"" 
-$cmd "sudo ln -s /etc/nginx/sites-available/production /etc/nginx/sites-enabled/production"
+$rsync nginx/$TYPE ubuntu@$PUBLIC_DNS:/tmp
+$cmd "sudo mv /tmp/$TYPE /etc/nginx/sites-available/"
+$cmd "sudo rm /etc/nginx/sites-enabled/$TYPE || echo \"No $TYPE symlink\"" 
+$cmd "sudo ln -s /etc/nginx/sites-available/$TYPE /etc/nginx/sites-enabled/$TYPE"
 $cmd "sudo rm /etc/nginx/sites-enabled/default || echo \"No default site\""
 $cmd "sudo rm /etc/nginx/sites-available/default || echo \"No default site\""
 $cmd "sudo /etc/init.d/nginx start"
