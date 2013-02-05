@@ -19,6 +19,7 @@ class Deployer
     instances.each do |instance|
       instance.set_current
       instance.run_services
+      instance.prune_releases
     end
   end
 
@@ -102,6 +103,13 @@ class Deployer
     def set_last_release
       cmd "rm last-deploy || echo \"No last deploy directory\""
       puts cmd "ln -s #{deploy_directory} last-deploy"      
+    end
+
+    def prune_releases
+      number_to_keep = 10
+      releases = cmd("ls -1dt deploy-*").split("\n")
+      return if releases.length <= number_to_keep
+      cmd "rm -r #{releases[number_to_keep..-1].join ' '}"
     end
 
     def run_services
