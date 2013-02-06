@@ -6,7 +6,7 @@ startDementor = (callback)->
   #TODO should be resetting this directory
   dementor = spawn "../../dementor/bin/madeye.js", null, {cwd: "tests/fake-project"}
   dementor.stdout.on "data", (data)->
-    if match = /http[-\w\d\/:\.]*/.exec(data)
+    if match = not /hangout/.exec(data) and  /http[-\w\d\/:\.]*/.exec(data)
       callback match[0]
     util.print "DEMENTOR STDOUT: #{data}"
   dementor.stderr.on "data", (data)->
