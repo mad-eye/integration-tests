@@ -13,6 +13,11 @@ for dir in "." apogee azkaban bolide dementor madeye-common; do
     git checkout develop
     if git log --oneline origin/develop..develop | wc -l | bc
     then
+        echo "Unpushed changes found in $dir develop."
+        CHANGES=1
+    fi
+    if git log --oneline develop..origin/develop | wc -l | bc
+    then
         echo "Unpulled changes found in $dir develop."
         CHANGES=1
         git merge origin/develop
