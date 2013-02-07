@@ -10,3 +10,6 @@
 [submodule "apogee"]
 	path = apogee
 	url = git@github.com:mad-eye/apogee.git
+[submodule "madeye-common"]
+	path = madeye-common
+	url = git@github.com:mad-eye/madeye-common.git
