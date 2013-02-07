@@ -11,9 +11,9 @@ UNPUSHED_REPOS=""
 
 #Update and check for changes
 for dir in "." apogee azkaban bolide dementor madeye-common; do
-    pushd $dir
+    pushd $dir >/dev/null
     git fetch
-    git checkout develop > /dev/null
+    git checkout develop
     #Check for unpushed changes in develop.
     numChanges=$(git log --oneline origin/develop..develop | wc -l | bc)
     if [ $numChanges -gt 0 ]; then
@@ -36,13 +36,13 @@ for dir in "." apogee azkaban bolide dementor madeye-common; do
         echo "Found unmerged changes in $dir master."
         CHANGES=1
         CHANGES_REPOS="$dir $CHANGES_REPOS"
-        git checkout master > /dev/null 
+        git checkout master
         git merge origin/master
-        git checkout develop > /dev/null
+        git checkout develop
         git merge master
         git push
     fi
-    popd
+    popd >/dev/null
 done
 
 if [ $UNPUSHED_CHANGES ]; then
@@ -59,13 +59,13 @@ fi
 
 for dir in apogee azkaban bolide dementor madeye-common; do
     pushd $dir
-    git checkout master > /dev/null
+    git checkout master
     git merge develop
     git push
     popd
 done
 
-git checkout master > /dev/null
+git checkout master
 git merge --no-ff --no-commit develop
 bin/init
 
