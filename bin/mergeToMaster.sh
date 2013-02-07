@@ -5,6 +5,9 @@ set -e
 #TODO: Bump dementor and madeye-common version -- But how much?
 
 CHANGES=0
+CHANGES_REPOS=""
+UNPUSHED_CHANGES=0
+UNPUSHED_REPOS=""
 
 #Update and check for changes
 for dir in "." apogee azkaban bolide dementor madeye-common; do
@@ -14,12 +17,14 @@ for dir in "." apogee azkaban bolide dementor madeye-common; do
     if git log --oneline origin/develop..develop | wc -l | bc
     then
         echo "Unpushed changes found in $dir develop."
-        CHANGES=1
+        UNPUSHED_CHANGES=1
+        UNPUSHED_REPOS="$dir $UNPUSHED_REPOS"
     fi
     if git log --oneline develop..origin/develop | wc -l | bc
     then
         echo "Unpulled changes found in $dir develop."
         CHANGES=1
+        CHANGES_REPOS="$dir $CHANGES_REPOS"
         git merge origin/develop
     fi
 
@@ -28,6 +33,7 @@ for dir in "." apogee azkaban bolide dementor madeye-common; do
     then
         echo "Found unmerged changes in $dir master."
         CHANGES=1
+        CHANGES_REPOS="$dir $CHANGES_REPOS"
         git checkout master
         git merge origin/master
         git checkout develop
@@ -37,8 +43,14 @@ for dir in "." apogee azkaban bolide dementor madeye-common; do
     popd
 done
 
+if [ $UNPUSHED_CHANGES ]; then
+    echo "You need to push changes in $UNPUSHED_REPOS"
+    echo "Please push, test, and try again."
+    exit $UNPUSHED_CHANGES
+fi
+
 if [ $CHANGES ]; then
-    echo "Commits needed for develop found, exiting."
+    echo "Commits needed for develop found in $CHANGES_REPOS, exiting."
     echo "Please test the new configuration and run again."
     exit $CHANGES
 fi
