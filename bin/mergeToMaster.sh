@@ -1,5 +1,5 @@
 #! /bin/sh
-set -ex
+set -e
 
 git fetch
 git checkout develop
@@ -26,5 +26,9 @@ git merge origin/master
 git merge --no-ff --no-commit develop
 bin/init
 
+#TODO: Automatically push ops config files to production?
+
 echo "Please run tests then commit."
+echo "If you have modified any files in madeye-ops, please push those to production."
+echo "(For example, /etc/init/*.conf scripts, nginx configurations, etc)"
 
