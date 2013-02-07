@@ -38,7 +38,7 @@ for dir in "." apogee azkaban bolide dementor madeye-common; do
         CHANGES_REPOS="$dir $CHANGES_REPOS"
         git checkout master > /dev/null 
         git merge origin/master
-        git checkout develo > /dev/null
+        git checkout develop > /dev/null
         git merge master
         git push
     fi
