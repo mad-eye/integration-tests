@@ -1,28 +1,52 @@
-#! /bin/sh
+#! /bin/bash
 set -e
 
-git fetch
-git checkout develop
-git merge origin/develop
-for dir in apogee azkaban bolide dementor madeye-common; do
-    #TODO: Bump dementor version -- But how much?
-    cd $dir
+
+#TODO: Bump dementor and madeye-common version -- But how much?
+
+CHANGES=0
+
+#Update and check for changes
+for dir in "." apogee azkaban bolide dementor madeye-common; do
+    pushd $dir
     git fetch
-    git checkout master
-    git merge origin/master
     git checkout develop
-    git merge origin/develop
-    git merge master
-    echo "Press return to continue, or cancel if this wasn't a no-op"
-    read dummy_var
+    if git log --oneline origin/develop..develop | wc -l | bc
+    then
+        echo "Unpulled changes found in $dir develop."
+        CHANGES=1
+        git merge origin/develop
+    fi
+
+    #Check number of commits in master but not develop
+    if git log --oneline master..develop | wc -l | bc
+    then
+        echo "Found unmerged changes in $dir master."
+        CHANGES=1
+        git checkout master
+        git merge origin/master
+        git checkout develop
+        git merge master
+        git push
+    fi
+    popd
+done
+
+if [ $CHANGES ]; then
+    echo "Commits needed for develop found, exiting."
+    echo "Please test the new configuration and run again."
+    exit $CHANGES
+fi
+
+for dir in apogee azkaban bolide dementor madeye-common; do
+    pushd $dir
     git checkout master
     git merge develop
     git push
-    cd ..
+    popd
 done
 
 git checkout master
-git merge origin/master
 git merge --no-ff --no-commit develop
 bin/init
 
