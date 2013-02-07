@@ -31,7 +31,7 @@ for dir in "." apogee azkaban bolide dementor madeye-common; do
     fi
 
     #Check number of commits in master but not develop
-    numChanges=$(git log --oneline master..develop | wc -l | bc)
+    numChanges=$(git log --oneline develop..master | wc -l | bc)
     if [ $numChanges -gt 0 ]; then
         echo "Found unmerged changes in $dir master."
         CHANGES=1
