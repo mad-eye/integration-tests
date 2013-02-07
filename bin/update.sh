@@ -13,7 +13,7 @@ for dir in integration-tests apogee azkaban bolide dementor madeye-common; do
     fi
 
     #Check number of commits in master but not develop
-    if git log --oneline master..develop | wc -l | bc
+    if git log --oneline develop..master | wc -l | bc
     then
         echo "Found unmerged changes in $dir master."
         git checkout master
