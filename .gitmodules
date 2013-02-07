@@ -12,4 +12,4 @@
 	url = git@github.com:mad-eye/apogee.git
 [submodule "madeye-common"]
 	path = madeye-common
-	url = https://github.com/mad-eye/madeye-common.git
+	url = git@github.com:mad-eye/madeye-common.git
