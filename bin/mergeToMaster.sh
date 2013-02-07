@@ -45,13 +45,13 @@ for dir in "." apogee azkaban bolide dementor madeye-common; do
     popd >/dev/null
 done
 
-if [ $UNPUSHED_CHANGES ]; then
+if [ $UNPUSHED_CHANGES -eq 1 ]; then
     echo "You need to push changes in $UNPUSHED_REPOS"
     echo "Please push, test, and try again."
     exit $UNPUSHED_CHANGES
 fi
 
-if [ $CHANGES ]; then
+if [ $CHANGES -eq 1 ]; then
     echo "Commits needed for develop found in $CHANGES_REPOS, exiting."
     echo "Please test the new configuration and run again."
     exit $CHANGES
