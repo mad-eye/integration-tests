@@ -11,9 +11,9 @@ UNPUSHED_REPOS=""
 
 #Update and check for changes
 for dir in "." apogee azkaban bolide dementor madeye-common; do
-    pushd $dir
+    pushd $dir >/dev/null
     git fetch
-    git checkout develop > /dev/null
+    git checkout develop
     #Check for unpushed changes in develop.
     numChanges=$(git log --oneline origin/develop..develop | wc -l | bc)
     if [ $numChanges -gt 0 ]; then
@@ -31,27 +31,27 @@ for dir in "." apogee azkaban bolide dementor madeye-common; do
     fi
 
     #Check number of commits in master but not develop
-    numChanges=$(git log --oneline master..develop | wc -l | bc)
+    numChanges=$(git log --oneline develop..master | wc -l | bc)
     if [ $numChanges -gt 0 ]; then
         echo "Found unmerged changes in $dir master."
         CHANGES=1
         CHANGES_REPOS="$dir $CHANGES_REPOS"
-        git checkout master > /dev/null 
+        git checkout master
         git merge origin/master
-        git checkout develop > /dev/null
+        git checkout develop
         git merge master
         git push
     fi
-    popd
+    popd >/dev/null
 done
 
-if [ $UNPUSHED_CHANGES ]; then
+if [ $UNPUSHED_CHANGES -eq 1 ]; then
     echo "You need to push changes in $UNPUSHED_REPOS"
     echo "Please push, test, and try again."
     exit $UNPUSHED_CHANGES
 fi
 
-if [ $CHANGES ]; then
+if [ $CHANGES -eq 1 ]; then
     echo "Commits needed for develop found in $CHANGES_REPOS, exiting."
     echo "Please test the new configuration and run again."
     exit $CHANGES
@@ -59,13 +59,16 @@ fi
 
 for dir in apogee azkaban bolide dementor madeye-common; do
     pushd $dir
-    git checkout master > /dev/null
-    git merge develop
-    git push
+    numChanges=$(git log --oneline master..develop | wc -l | bc)
+    if [ $numChanges -gt 0 ]; then
+        git checkout master
+        git merge develop
+        git push
+    fi
     popd
 done
 
-git checkout master > /dev/null
+git checkout master
 git merge --no-ff --no-commit develop
 bin/init
 
