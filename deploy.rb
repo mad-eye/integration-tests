@@ -88,7 +88,9 @@ class Deployer
     end
 
     def setup_apogee
-      puts cmd "cd #{deploy_directory}/apogee && meteor bundle /tmp/apogee.tar.gz"
+      puts cmd "cd #{deploy_directory}/apogee && mrt bundle /tmp/apogee.tar.gz"
+      #HACK: Terrible hack.  but the first time we run it it cleans some things up.
+      puts cmd "cd #{deploy_directory}/apogee && mrt bundle /tmp/apogee.tar.gz"
       puts cmd "cd #{deploy_directory} && tar -xf /tmp/apogee.tar.gz"
       cmd "rm /tmp/apogee.tar.gz"
     end
