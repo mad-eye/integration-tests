@@ -71,17 +71,23 @@ class Deployer
       return result
     end
 
+    def local_cmd(command)
+      result = `#{command}`
+      abort "FAILURE RUNNING #{command}" if $?.exitstatus != 0
+      return result
+    end
+
     def push_apps
       ["bolide", "azkaban", "apogee"].each {|app| push_app(app)}
     end
 
     def push_app(app)
       zippedApp = "#{app}.zip"
-      `zip -r #{zippedApp} #{app}`
+      local_cmd "zip -r #{zippedApp} #{app}"
       puts "running scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}"
-      `scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}`
+      local_cmd "scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}"
       cmd "cd #{deploy_directory} && unzip #{zippedApp}"
-      `rm #{zippedApp}`
+      local_cmd "rm #{zippedApp}"
       cmd "rm #{deploy_directory}/#{zippedApp}"
       cmd "cd #{deploy_directory}/#{app} && npm install .madeye-common" if app == "azkaban"
       cmd "cd #{deploy_directory}/#{app} && npm install" unless app == "apogee"
