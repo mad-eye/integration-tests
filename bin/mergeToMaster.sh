@@ -58,14 +58,14 @@ if [ $CHANGES -eq 1 ]; then
 fi
 
 for dir in apogee azkaban bolide dementor madeye-common; do
-    pushd $dir
+    pushd $dir >/dev/null
     numChanges=$(git log --oneline master..develop | wc -l | bc)
     if [ $numChanges -gt 0 ]; then
         git checkout master
         git merge develop
         git push
     fi
-    popd
+    popd >/dev/null
 done
 
 git checkout master
