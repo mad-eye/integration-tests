@@ -1,7 +1,5 @@
 #! /usr/bin/env ruby
 
-#TODO create symlink to last release
-
 require "optparse"
 require "vagrant"
 
