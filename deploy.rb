@@ -1,7 +1,5 @@
 #! /usr/bin/env ruby
 
-#TODO create symlink to last release
-
 require "optparse"
 require "vagrant"
 
@@ -19,6 +17,7 @@ class Deployer
     instances.each do |instance|
       instance.set_current
       instance.run_services
+      instance.prune_releases
     end
   end
 
@@ -70,17 +69,23 @@ class Deployer
       return result
     end
 
+    def local_cmd(command)
+      result = `#{command}`
+      abort "FAILURE RUNNING #{command}" if $?.exitstatus != 0
+      return result
+    end
+
     def push_apps
       ["bolide", "azkaban", "apogee"].each {|app| push_app(app)}
     end
 
     def push_app(app)
       zippedApp = "#{app}.zip"
-      `zip -r #{zippedApp} #{app}`
+      local_cmd "zip -r #{zippedApp} #{app}"
       puts "running scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}"
-      `scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}`
+      local_cmd "scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}"
       cmd "cd #{deploy_directory} && unzip #{zippedApp}"
-      `rm #{zippedApp}`
+      local_cmd "rm #{zippedApp}"
       cmd "rm #{deploy_directory}/#{zippedApp}"
       cmd "cd #{deploy_directory}/#{app} && npm install .madeye-common" if app == "azkaban"
       cmd "cd #{deploy_directory}/#{app} && npm install" unless app == "apogee"
@@ -102,6 +107,13 @@ class Deployer
     def set_last_release
       cmd "rm last-deploy || echo \"No last deploy directory\""
       puts cmd "ln -s #{deploy_directory} last-deploy"      
+    end
+
+    def prune_releases
+      number_to_keep = 10
+      releases = cmd("ls -1dt deploy-*").split("\n")
+      return if releases.length <= number_to_keep
+      cmd "rm -r #{releases[number_to_keep..-1].join ' '}"
     end
 
     def run_services
