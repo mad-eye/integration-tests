@@ -9,13 +9,14 @@ Meteor.startup ->
 
       before (done)->
         Meteor.call "createFakeProject", (err)->
-          console.log("HOLLER", err);
           done()
 
-      it "does other stuff", ->
+      it "does other stuff", (done)->
+        editorId = "fakeEditor1"
         file = Files.findOne()
-        window.editorState = new EditorState()
-        editorState.setPath file.path
-        document.body.appendChild Meteor.render(Template.editor)
-        Session.set "editorRendered", true
-
+        bolide.create file._id, ->
+          bolide.set file._id, "new doc contents", ->
+            editorState = new EditorState(editorId)
+            editorState.loadFile file, ->
+              assert.equal ace.edit(editorId).getValue(), "new doc contents"
+              done()
