@@ -1,6 +1,10 @@
+appendEditor = (editorId) ->
+  $("<p><div id='#{editorId}' style='height:40px; width: 300px'></div></p>").appendTo document.body
+
+
 Meteor.startup ->
   if Meteor.isClient
-    describe "big picture stuff", ->
+    describe "EditorState loadFile", ->
       Meteor.subscribe "fakeProject"
       Meteor.autosubscribe ->
         Meteor.subscribe "files", Projects.findOne()?._id
@@ -11,10 +15,9 @@ Meteor.startup ->
         Meteor.call "createFakeProject", [{path: "README.md"}, {path: "settings.json"}],  (err)->
           done()
 
-      it "does other stuff", (done)->
+      it "populate the editor", (done)->
         editorId = "fakeEditor1"
-        #TODO extract method for creating/appending editor DOM
-        $("<p><div id='#{editorId}' style='height:40px; width: 300px'></div></p>").appendTo document.body
+        appendEditor editorId
         file = Files.findOne path: "README.md"
         bolide.create file._id, ->
           bolide.set file._id, "new doc contents", ->
@@ -25,9 +28,9 @@ Meteor.startup ->
 
         #TODO cleanup (remove the editor, detach ace)
 
-      it "does even more stuff", (done)->
+      it "populates the editor again", (done)->
         editorId = "fakeEditor2"
-        $("<p><div id='#{editorId}' style='width:300px; height: 40px'></div></p>").appendTo document.body
+        appendEditor editorId
         file = Files.findOne path: "settings.json"
         bolide.create file._id, ->
           bolide.set file._id, "{\"blah\":false}", ->
@@ -36,4 +39,3 @@ Meteor.startup ->
               assert.equal ace.edit(editorId).getValue(), "{\"blah\":false}"
               done()
               
-
