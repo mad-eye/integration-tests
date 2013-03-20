@@ -13,3 +13,6 @@
 [submodule "madeye-common"]
 	path = madeye-common
 	url = git@github.com:mad-eye/madeye-common.git
+[submodule "madeye-ops"]
+	path = madeye-ops
+	url = git@github.com:mad-eye/madeye-ops.git
