@@ -88,7 +88,6 @@ class Deployer
       local_cmd "rm #{zippedApp}"
       cmd "rm #{deploy_directory}/#{zippedApp}"
       cmd "cd #{deploy_directory}/#{app} && npm install -q --production .madeye-common" if app == "azkaban" or app == "bolide"
-      cmd "cd #{deploy_directory}/#{app} && npm install -q --production share" if app == "bolide"
       cmd "cd #{deploy_directory}/#{app} && npm install -q --production" unless app == "apogee"
     end
 
