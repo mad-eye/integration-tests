@@ -12,6 +12,7 @@ class Deployer
       instance.create_deploy_directory
       instance.set_last_release
       instance.push_apps
+      instance.push_tests
       instance.setup_apogee
     end
     instances.each do |instance|
@@ -88,6 +89,10 @@ class Deployer
       local_cmd "rm #{zippedApp}"
       cmd "rm #{deploy_directory}/#{zippedApp}"
       cmd "cd #{deploy_directory}/#{app} && bin/install --production" unless app == "apogee"
+    end
+
+    def push_tests
+      local_cmd "rsync -rv tests/web/ #{user}@#{hostname}:#{deploy_directory}/web-tests/"
     end
 
     def setup_apogee
