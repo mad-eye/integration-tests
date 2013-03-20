@@ -92,7 +92,7 @@ class Deployer
     end
 
     def push_tests
-      local_cmd "rsync -rv tests/web/ #{user}@#{hostname}:#{deploy_directory}/web-tests/"
+      local_cmd "rsync -rv tests/ #{user}@#{hostname}:#{deploy_directory}/tests/"
     end
 
     def setup_apogee
