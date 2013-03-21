@@ -2,7 +2,7 @@ express = require('express')
 http = require('http')
 io = require 'socket.io-client'
 {Settings, messageAction} = require 'madeye-common'
-cors = require '../../azkaban/cors'
+cors = require './cors'
 
 app = express()
 
@@ -87,6 +87,7 @@ app.post '/message/localFilesSaved/:projectId', (req, res) ->
   data =
     projectId : projectId
     file : req.body.file
+    contents: req.body.file.contents
   socket.emit messageAction.LOCAL_FILE_SAVED, data, (err) ->
     res.end()
 
