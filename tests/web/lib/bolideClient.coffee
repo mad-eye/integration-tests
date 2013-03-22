@@ -13,8 +13,11 @@ Meteor.startup ->
     set: (name, contents, callback)->
       bolide.snapshot name, (err, resp)->
         version = resp.headers["x-ot-version"]
-        #TODO delete something if its already there (currently just inserts at position 0)
-        bolide.modify name, version, [contents], (err, resp)->
+        ops = []
+        ops.push contents
+        if resp.content.length > 0
+          ops.push {d: resp.content.length}
+        bolide.modify name, version, ops, (err, resp)->
           callback err, resp
 
     snapshot: (name, callback)->
