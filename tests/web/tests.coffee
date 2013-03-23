@@ -4,12 +4,12 @@ appendEditor = (editorId) ->
 
 Meteor.startup ->
   if Meteor.isClient
+    assert = chai.assert
     describe "EditorState loadFile", ->
       Meteor.subscribe "fakeProject"
       Meteor.autosubscribe ->
         Meteor.subscribe "files", Projects.findOne()?._id
 
-      assert = chai.assert
 
       before (done)->
         Meteor.call "createFakeProject", [{path: "README.md"}, {path: "settings.json"}, {path: "BigFile.java"}, {path: "prophecy.js"}],  (err)->
