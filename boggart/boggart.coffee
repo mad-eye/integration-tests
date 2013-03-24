@@ -4,8 +4,6 @@ io = require 'socket.io-client'
 {Settings, messageAction} = require 'madeye-common'
 cors = require './cors'
 
-console.log "Using messageAction:", messageAction
-
 app = express()
 
 app.configure =>
