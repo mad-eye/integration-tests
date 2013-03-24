@@ -40,6 +40,16 @@ if Meteor.isClient
         console.log "Got response from POST file."
         callback()
 
+    #callback: (fileContents) ->
+    getDementorFile = (fileId, callback) ->
+      Meteor.http.get "http://localhost:4999/file/#{fileId}", {
+        headers: {'Content-Type':'application/json'}
+      }, (error, response) ->
+        assert.isNull error
+        assert.ok response.data
+        console.log "Got response from GET file:", response.data
+        callback(response.data)
+
     describe "File Actions", ->
       projectId = null
       Meteor.subscribe "fakeProject"
@@ -71,8 +81,7 @@ if Meteor.isClient
                 done()
 
         after (done) ->
-          disconnectDementor projectId, ->
-            done()
+          disconnectDementor projectId, done
 
         it 'should set editor body to contents', (done) ->
           editorState.loadFile file, (err) ->
@@ -80,11 +89,47 @@ if Meteor.isClient
             assert.equal ace.edit(editorId).getValue(), fileData.contents
             done()
 
-  ###
       describe 'on save file', ->
-        it "should replace the local file's content"
-        it "should mark the file as unmodified"
+        editorState = null
+        editorId = "editor" + randomId()
 
+        file = null
+        fileData =
+          path : 'foo/save.txt'
+          isDir : false
+          contents : 'A happy duck is a warm duck.'
+          aceMode: ->
+
+        newContents = "Run for the hills, little ducky."
+        Meteor.autorun ->
+          file = Files.findOne path: fileData.path
+
+        before (done) ->
+          appendEditor editorId
+          editorState = new EditorState editorId
+
+          createFakeProject [fileData], (result) ->
+            projectId = result
+            connectDementor projectId, (response) ->
+              addDementorFile file, ->
+                editorState.loadFile file, (err) ->
+                  assert.isNull err
+                  editorState.getEditor().setValue newContents
+                  editorState.save done
+
+        after (done) ->
+          disconnectDementor projectId, done
+
+        it "should replace the local file's content", (done) ->
+          getDementorFile file._id, (data) ->
+            assert.equal data.contents, newContents
+            done()
+          
+        it "should mark the file as unmodified", ->
+          file = Files.findOne path: fileData.path
+          assert.isFalse file.modified
+
+  ###
       describe 'on revert file', ->
         it "should replace the editor's content with the file's content"
         it "should mark the file as unmodified"

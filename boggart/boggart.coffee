@@ -4,6 +4,8 @@ io = require 'socket.io-client'
 {Settings, messageAction} = require 'madeye-common'
 cors = require './cors'
 
+console.log "Using messageAction:", messageAction
+
 app = express()
 
 app.configure =>
@@ -113,11 +115,12 @@ app.post '/file/:fileId', (req, res) ->
   fileId = req.params.fileId
   file = req.body.file
   file._id = fileId
-  console.log "Writing file", file.path
+  console.log "POST file", file.path
   files[fileId] = file
   res.end()
 
 app.get '/file/:fileId', (req, res) ->
+  console.log "GET file", req.params.fileId
   res.json files[req.params.fileId]
   res.end()
 
