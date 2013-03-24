@@ -7,6 +7,10 @@ if Meteor.isClient
   Meteor.startup ->
     assert = chai.assert
 
+    setupEditor = (editorId) ->
+      appendEditor editorId
+      return new EditorState editorId
+
     #callback: (projectId) ->
     createFakeProject = (files, callback) ->
       Meteor.call 'createFakeProject', files, (error, result) ->
@@ -62,7 +66,7 @@ if Meteor.isClient
 
         file = null
         fileData =
-          path : 'foo/test.txt'
+          path : 'foo/load.txt'
           isDir : false
           contents : 'A happy duck is a warm duck.'
           aceMode: ->
@@ -71,8 +75,7 @@ if Meteor.isClient
           file = Files.findOne path: fileData.path
 
         before (done) ->
-          appendEditor editorId
-          editorState = new EditorState editorId
+          editorState = setupEditor editorId
 
           createFakeProject [fileData], (result) ->
             projectId = result
@@ -105,8 +108,7 @@ if Meteor.isClient
           file = Files.findOne path: fileData.path
 
         before (done) ->
-          appendEditor editorId
-          editorState = new EditorState editorId
+          editorState = setupEditor editorId
 
           createFakeProject [fileData], (result) ->
             projectId = result
@@ -124,16 +126,49 @@ if Meteor.isClient
           getDementorFile file._id, (data) ->
             assert.equal data.contents, newContents
             done()
-          
+
+        it "should mark the file as unmodified", ->
+          file = Files.findOne path: fileData.path
+          assert.isFalse file.modified
+
+      describe 'on revert file', ->
+        editorState = null
+        editorId = "editor" + randomId()
+
+        file = null
+        fileData =
+          path : 'foo/revert.txt'
+          isDir : false
+          contents : 'Sometimes, ducky is gone.'
+          aceMode: ->
+
+        Meteor.autorun ->
+          file = Files.findOne path: fileData.path
+
+        before (done) ->
+          editorState = setupEditor editorId
+
+          createFakeProject [fileData], (result) ->
+            projectId = result
+            connectDementor projectId, (response) ->
+              addDementorFile file, ->
+                editorState.loadFile file, (err) ->
+                  assert.isNull err
+                  editorState.getEditor().setValue "Something you should never see."
+                  editorState.revertFile done
+
+        after (done) ->
+          disconnectDementor projectId, done
+
+        it "should replace the editor's content with the file's content", (done) ->
+          getDementorFile file._id, (data) ->
+            assert.equal data.contents, fileData.contents
+            done()
         it "should mark the file as unmodified", ->
           file = Files.findOne path: fileData.path
           assert.isFalse file.modified
 
   ###
-      describe 'on revert file', ->
-        it "should replace the editor's content with the file's content"
-        it "should mark the file as unmodified"
-
       describe 'on discard file', ->
         it "should remove the file from the fileTree"
         it "should clear the editor"
