@@ -1,5 +1,18 @@
 Meteor.startup ->
   if Meteor.isServer
+
+    addFiles = (projectId, files=[]) ->
+      for f in files
+        file = new File f
+        file.projectId =  projectId
+        file.modified_locally = f.modified_locally ? false
+        file.isDir = f.isDir ? false
+        file.modified = f.modified ? false
+        file.save()
+      console.log "added files", files
+      return files
+
+
     Meteor.publish "fakeProject", ->
       Projects.collection.find({test: true}, {sort: {date: -1}})
 
@@ -12,13 +25,11 @@ Meteor.startup ->
         project.test = true
         project.save()
 
-        files ?= [{path:"README.md"}]
-        for f in files
-          file = new File f
-          file.projectId = project._id
-          file.modified_locally = f.modified_locally ? false
-          file.isDir = f.isDir ? false
-          file.modified = f.modified ? false
-          file.save()
-
+        addFiles project._id, files
         return project._id
+
+      addFakeFiles: (projectId, files) ->
+        @unblock()
+        return addFiles projectId, files
+        
+

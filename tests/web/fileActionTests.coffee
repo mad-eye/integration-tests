@@ -3,78 +3,95 @@
 randomId = () ->
   return Math.floor( Math.random() * 1000000 + 1)
 
-Meteor.startup ->
-  describe "File Actions", ->
+if Meteor.isClient
+  Meteor.startup ->
     assert = chai.assert
-    projectId = null
-    Meteor.subscribe "fakeProject"
-    Meteor.autosubscribe ->
-      projectId = Projects.findOne()?._id
-      Meteor.subscribe "files", projectId
 
-    file = null
-    filePath = 'foo/test.txt'
-    fileData =
-      path : filePath
-      isDir : false
-      contents : 'A happy duck is a warm duck.'
-      aceMode: ->
+    #callback: (projectId) ->
+    createFakeProject = (files, callback) ->
+      Meteor.call 'createFakeProject', files, (error, result) ->
+        assert.isUndefined error
+        console.log "created project:", result
+        Meteor.flush()
+        callback result
 
-    Meteor.autorun ->
-      file = Files.findOne path: filePath
+    #callback: (projectId) ->
+    connectDementor = (projectId, callback) ->
+      Meteor.http.post "http://localhost:4999/socket/#{projectId}", (error, response) ->
+        console.log "Returning from opening socket."
+        console.error "open socket:", error.message if error
+        assert.isNull error, "Unexpected error:", error
+        console.log "Got response from POST socket."
+        callback response
 
-    describe "on request file", ->
-      editorState = null
-      editorId = "editor" + randomId()
+    disconnectDementor = (projectId, callback) ->
+      Meteor.http.del "http://localhost:4999/socket/#{projectId}", (error, response) ->
+        console.log "Got response from DELETE socket with error:", error
+        callback()
 
-      before (done) ->
-        appendEditor editorId
-        editorState = new EditorState editorId
 
-        Meteor.call 'createFakeProject', [fileData], (error, result) ->
-          assert.isUndefined error
-          projectId = result
-          console.log "created project:", projectId
-          Meteor.flush()
-          
+    #callback: ->
+    addDementorFile = (file, callback) ->
+      Meteor.http.post "http://localhost:4999/file/#{file._id}", {
+        data: {file: file}
+        headers: {'Content-Type':'application/json'}
+      }, (error, response) ->
+        assert.isNull error
+        console.log "Got response from POST file."
+        callback()
 
-          Meteor.http.post "http://localhost:4999/socket/#{projectId}", (error, response) ->
-            console.log "Returning from opening socket."
-            console.error "open socket:", error.message if error
-            assert.isNull error, "Unexpected error:", error
-            console.log "Got response from POST socket."
+    describe "File Actions", ->
+      projectId = null
+      Meteor.subscribe "fakeProject"
+      Meteor.autosubscribe ->
+        Meteor.subscribe "files", Projects.findOne()?._id
 
-            Meteor.http.post "http://localhost:4999/file/#{file._id}", {
-              data: {file: file}
-              headers: {'Content-Type':'application/json'}
-            }, (error, response) ->
-              assert.isNull error
-              console.log "Got response from POST file."
-              done()
+      describe "on request file", ->
+        editorState = null
+        editorId = "editor" + randomId()
 
-      after (done) ->
-        Meteor.http.del "http://localhost:4999/socket/#{projectId}", (error, response) ->
-          console.log "Got response from DELETE socket with error:", error
-          done()
+        file = null
+        fileData =
+          path : 'foo/test.txt'
+          isDir : false
+          contents : 'A happy duck is a warm duck.'
+          aceMode: ->
 
-      it 'should set editor body to contents', (done) ->
-        editorState.loadFile file, (err) ->
-          assert.isNull err
-          assert.equal ace.edit(editorId).getValue(), fileData.contents
-          done()
+        Meteor.autorun ->
+          file = Files.findOne path: fileData.path
 
-###
-    describe 'on save file', ->
-      it "should replace the local file's content"
-      it "should mark the file as unmodified"
+        before (done) ->
+          appendEditor editorId
+          editorState = new EditorState editorId
 
-    describe 'on revert file', ->
-      it "should replace the editor's content with the file's content"
-      it "should mark the file as unmodified"
+          createFakeProject [fileData], (result) ->
+            projectId = result
+            connectDementor projectId, (response) ->
+              addDementorFile file, ->
+                done()
 
-    describe 'on discard file', ->
-      it "should remove the file from the fileTree"
-      it "should clear the editor"
+        after (done) ->
+          disconnectDementor projectId, ->
+            done()
 
-###
+        it 'should set editor body to contents', (done) ->
+          editorState.loadFile file, (err) ->
+            assert.isNull err
+            assert.equal ace.edit(editorId).getValue(), fileData.contents
+            done()
+
+  ###
+      describe 'on save file', ->
+        it "should replace the local file's content"
+        it "should mark the file as unmodified"
+
+      describe 'on revert file', ->
+        it "should replace the editor's content with the file's content"
+        it "should mark the file as unmodified"
+
+      describe 'on discard file', ->
+        it "should remove the file from the fileTree"
+        it "should clear the editor"
+
+  ###
 
