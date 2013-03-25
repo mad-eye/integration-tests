@@ -43,6 +43,16 @@ if Meteor.isClient
         assert.isNull error
         console.log "Got response from POST file."
         callback()
+        
+    addDementorFiles = (files, callback) ->
+      Meteor.http.post "http://localhost:4999/files", {
+        data: {files: files}
+        headers: {'Content-Type':'application/json'}
+      }, (error, response) ->
+        assert.isNull error
+        console.log "Got response from POST files."
+        callback()
+      
 
     #callback: (fileContents) ->
     getDementorFile = (fileId, callback) ->
@@ -78,7 +88,7 @@ if Meteor.isClient
           editorState = setupEditor editorId
 
           createFakeProject [fileData], (result) ->
-            projectId = result
+            projectId = result.projectId
             connectDementor projectId, (response) ->
               addDementorFile file, ->
                 done()
@@ -111,7 +121,7 @@ if Meteor.isClient
           editorState = setupEditor editorId
 
           createFakeProject [fileData], (result) ->
-            projectId = result
+            projectId = result.projectId
             connectDementor projectId, (response) ->
               addDementorFile file, ->
                 editorState.loadFile file, (err) ->
@@ -149,7 +159,7 @@ if Meteor.isClient
           editorState = setupEditor editorId
 
           createFakeProject [fileData], (result) ->
-            projectId = result
+            projectId = result.projectId
             connectDementor projectId, (response) ->
               addDementorFile file, ->
                 editorState.loadFile file, (err) ->
@@ -160,13 +170,107 @@ if Meteor.isClient
         after (done) ->
           disconnectDementor projectId, done
 
-        it "should replace the editor's content with the file's content", (done) ->
+        it "should revert the editor's content to the original", ->
+          assert.equal ace.edit(editorId).getValue(), fileData.contents
+        it "should leave dementor's file contents unchanged", (done) ->
           getDementorFile file._id, (data) ->
             assert.equal data.contents, fileData.contents
             done()
         it "should mark the file as unmodified", ->
           file = Files.findOne path: fileData.path
           assert.isFalse file.modified
+
+      describe "on request file with weird line endings", ->
+        editorState = null
+        editorId = "editor" + randomId()
+
+
+        #dos \r\n
+        #mac \r
+        #unix \n
+        weirdFiles = {}
+        weirdFileData = [{
+            path : 'puredos'
+            isDir : false
+            contents : '1\r\n2\r\n3'
+        }, {
+            path : 'dosunix'
+            isDir : false
+            contents : '1\r\n2\n3'
+        }, {
+            path : 'dosunixmac'
+            isDir : false
+            contents : '1\r\n2\n3\r'
+        }, {
+            path : 'unixmac'
+            isDir : false
+            contents : '1\n2\r3'
+        }, {
+            path : 'dosmac'
+            isDir : false
+            contents : '1\r\n2\r3'
+        }, {
+            path : 'puremac'
+            isDir : false
+            contents : '1\r2\r3'
+        }]
+
+
+        before (done) ->
+          editorState = setupEditor editorId
+
+          createFakeProject weirdFileData, (result) ->
+            projectId = result.projectId
+            files = result.files
+            console.log "Retrieved files", files
+            for f in files
+              console.log "Adding file to weirdFiles:", f
+              f.aceMode = ->
+              weirdFiles[f.path] = f
+            console.log "Added weirdFiles:", weirdFiles
+            connectDementor projectId, (response) ->
+              addDementorFiles files, ->
+                done()
+
+        after (done) ->
+          disconnectDementor projectId, done
+
+        it 'should leave pure dos alone', (done) ->
+          editorState.loadFile weirdFiles['puredos'], (err) ->
+            assert.isNull err
+            assert.equal ace.edit(editorId).getValue(), '1\r\n2\r\n3'
+            done()
+
+        it 'should leave pure mac alone', (done) ->
+          editorState.loadFile weirdFiles['puremac'], (err) ->
+            assert.isNull err
+            assert.equal ace.edit(editorId).getValue(), '1\r2\r3'
+            done()
+
+        it 'should convert dosunix to unix', (done) ->
+          editorState.loadFile weirdFiles['dosunix'], (err) ->
+            assert.isNull err
+            assert.equal ace.edit(editorId).getValue(), '1\n2\n3'
+            done()
+
+        it 'should convert dosunixmac to unix', (done) ->
+          editorState.loadFile weirdFiles['dosunixmac'], (err) ->
+            assert.isNull err
+            assert.equal ace.edit(editorId).getValue(), '1\n2\n3\n'
+            done()
+
+        it 'should convert dosmac to dos', (done) ->
+          editorState.loadFile weirdFiles['dosmac'], (err) ->
+            assert.isNull err
+            assert.equal ace.edit(editorId).getValue(), '1\r\n2\r\n3'
+            done()
+
+        it 'should convert unixmac to unix', (done) ->
+          editorState.loadFile weirdFiles['unixmac'], (err) ->
+            assert.isNull err
+            assert.equal ace.edit(editorId).getValue(), '1\n2\n3'
+            done()
+
 
   ###
       describe 'on discard file', ->

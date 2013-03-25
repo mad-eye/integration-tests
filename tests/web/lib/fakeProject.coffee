@@ -2,6 +2,7 @@ Meteor.startup ->
   if Meteor.isServer
 
     addFiles = (projectId, files=[]) ->
+      savedFiles = []
       for f in files
         file = new File f
         file.projectId =  projectId
@@ -9,8 +10,9 @@ Meteor.startup ->
         file.isDir = f.isDir ? false
         file.modified = f.modified ? false
         file.save()
-      console.log "added files", files
-      return files
+        savedFiles.push file
+      console.log "added files", savedFiles
+      return savedFiles
 
 
     Meteor.publish "fakeProject", ->
@@ -25,8 +27,8 @@ Meteor.startup ->
         project.test = true
         project.save()
 
-        addFiles project._id, files
-        return project._id
+        files = addFiles project._id, files
+        return projectId: project._id, files: files
 
       addFakeFiles: (projectId, files) ->
         @unblock()

@@ -47,7 +47,6 @@ app.post '/socket/:projectId', (req, res) ->
 
   #callback: (err, body) =>, errors are encoded as {error:}
   socket.on messageAction.REQUEST_FILE, (data, callback) ->
-    console.log "Requested local file", data
     fileId = data.fileId
     unless fileId then callback errors.new 'MISSING_PARAM'; return
     file = files[fileId]
@@ -55,7 +54,6 @@ app.post '/socket/:projectId', (req, res) ->
 
   #callback: (err) =>, errors are encoded as {error:}
   socket.on messageAction.SAVE_LOCAL_FILE, (data, callback) ->
-    console.log "Saving local file", data
     fileId = data.fileId
     contents = data.contents
     unless fileId && contents?
@@ -111,14 +109,22 @@ app.post '/message/:projectId/:action', (req, res)->
 
 app.post '/file/:fileId', (req, res) ->
   fileId = req.params.fileId
+  console.log "Found req.body.file", req.body.file
   file = req.body.file
   file._id = fileId
-  console.log "POST file", file.path
+  console.log "Writing file", file
   files[fileId] = file
   res.end()
+  
+app.post '/files', (req, res) ->
+  newFiles = req.body.files
+  for file in newFiles
+    files[file._id] = file
+  console.log "Wrote files", files
+  res.end()
+    
 
 app.get '/file/:fileId', (req, res) ->
-  console.log "GET file", req.params.fileId
   res.json files[req.params.fileId]
   res.end()
 
