@@ -112,7 +112,7 @@ app.post '/file/:fileId', (req, res) ->
   console.log "Found req.body.file", req.body.file
   file = req.body.file
   file._id = fileId
-  console.log "Writing file", file
+  console.log "Writing file", file.path
   files[fileId] = file
   res.end()
   
@@ -120,7 +120,7 @@ app.post '/files', (req, res) ->
   newFiles = req.body.files
   for file in newFiles
     files[file._id] = file
-  console.log "Wrote files", files
+  #console.log "Wrote files", files
   res.end()
     
 

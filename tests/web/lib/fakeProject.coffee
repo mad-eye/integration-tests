@@ -11,7 +11,7 @@ Meteor.startup ->
         file.modified = f.modified ? false
         file.save()
         savedFiles.push file
-      console.log "added files", savedFiles
+      #console.log "added files", savedFiles
       return savedFiles
 
 
