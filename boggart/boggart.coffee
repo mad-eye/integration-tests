@@ -7,7 +7,7 @@ cors = require './cors'
 app = express()
 
 app.configure =>
-  app.set('port', 4999)
+  app.set('port', process.env.MADEYE_BOGGART_PORT)
   app.use(express.logger('dev'))
   app.use(express.bodyParser())
   app.use(express.methodOverride())
