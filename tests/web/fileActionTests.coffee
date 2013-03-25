@@ -21,7 +21,7 @@ if Meteor.isClient
 
     #callback: (projectId) ->
     connectDementor = (projectId, callback) ->
-      Meteor.http.post "http://localhost:4999/socket/#{projectId}", (error, response) ->
+      Meteor.http.post "#{Meteor.settings.public.boggartUrl}/socket/#{projectId}", (error, response) ->
         console.log "Returning from opening socket."
         console.error "open socket:", error.message if error
         assert.isNull error, "Unexpected error:", error
@@ -29,14 +29,14 @@ if Meteor.isClient
         callback response
 
     disconnectDementor = (projectId, callback) ->
-      Meteor.http.del "http://localhost:4999/socket/#{projectId}", (error, response) ->
+      Meteor.http.del "#{Meteor.settings.public.boggartUrl}/socket/#{projectId}", (error, response) ->
         console.log "Got response from DELETE socket with error:", error
         callback()
 
 
     #callback: ->
     addDementorFile = (file, callback) ->
-      Meteor.http.post "http://localhost:4999/file/#{file._id}", {
+      Meteor.http.post "#{Meteor.settings.public.boggartUrl}/file/#{file._id}", {
         data: {file: file}
         headers: {'Content-Type':'application/json'}
       }, (error, response) ->
@@ -45,7 +45,7 @@ if Meteor.isClient
         callback()
         
     addDementorFiles = (files, callback) ->
-      Meteor.http.post "http://localhost:4999/files", {
+      Meteor.http.post "#{Meteor.settings.public.boggartUrl}/files", {
         data: {files: files}
         headers: {'Content-Type':'application/json'}
       }, (error, response) ->
@@ -56,7 +56,7 @@ if Meteor.isClient
 
     #callback: (fileContents) ->
     getDementorFile = (fileId, callback) ->
-      Meteor.http.get "http://localhost:4999/file/#{fileId}", {
+      Meteor.http.get "#{Meteor.settings.public.boggartUrl}/file/#{fileId}", {
         headers: {'Content-Type':'application/json'}
       }, (error, response) ->
         assert.isNull error
