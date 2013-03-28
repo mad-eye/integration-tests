@@ -2,15 +2,13 @@
 set -e
 
 
-#TODO: Bump dementor and madeye-common version -- But how much?
-
 CHANGES=0
 CHANGES_REPOS=""
 UNPUSHED_CHANGES=0
 UNPUSHED_REPOS=""
 
 #Update and check for changes
-for dir in "." apogee azkaban bolide dementor madeye-common; do
+for dir in "." apogee azkaban bolide dementor madeye-common madeye-ops; do
     pushd $dir >/dev/null
     git fetch
     git checkout develop
@@ -71,8 +69,6 @@ done
 git checkout master
 git merge --no-ff --no-commit develop
 bin/init
-
-#TODO: Automatically push ops config files to production?
 
 echo "Please run tests then commit."
 echo "If you have modified any files in madeye-ops, please push those to production."

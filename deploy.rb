@@ -4,7 +4,7 @@ require "optparse"
 require "vagrant"
 
 class Deployer
-  attr_accessor :is_ec2, :is_vagrant, :branch, :server
+  attr_accessor :is_ec2, :is_vagrant, :branch, :server, :include_tests
 
   def deploy
     instances = create_instances
@@ -12,7 +12,8 @@ class Deployer
       instance.create_deploy_directory
       instance.set_last_release
       instance.push_apps
-      instance.setup_apogee
+      instance.push_tests
+      instance.setup_apogee(@include_tests)
     end
     instances.each do |instance|
       instance.set_current
@@ -87,26 +88,38 @@ class Deployer
       cmd "cd #{deploy_directory} && unzip #{zippedApp}"
       local_cmd "rm #{zippedApp}"
       cmd "rm #{deploy_directory}/#{zippedApp}"
-      cmd "cd #{deploy_directory}/#{app} && npm install -q --production .madeye-common" if app == "azkaban" or app == "bolide"
-      cmd "cd #{deploy_directory}/#{app} && npm install -q --production share" if app == "bolide"
-      cmd "cd #{deploy_directory}/#{app} && npm install -q --production" unless app == "apogee"
+      cmd "cd #{deploy_directory}/#{app} && bin/install --production" unless app == "apogee"
     end
 
-    def setup_apogee
-      puts cmd "cd #{deploy_directory}/apogee && mrt bundle /tmp/apogee.tar.gz"
+    def push_tests
+      local_cmd "rsync -rv tests/ #{user}@#{hostname}:#{deploy_directory}/tests/"
+      local_cmd "rsync -rv boggart/ #{user}@#{hostname}:#{deploy_directory}/boggart/"
+      cmd "cd #{deploy_directory}/boggart && npm install -q"
+    end
+
+    def setup_apogee(include_tests=false)
+      tarfile = '/tmp/apogee.tar.gz'
+      if include_tests
+        test_tarfile = '/tmp/apogee_test.tar.gz'
+      end
       #HACK: Terrible hack.  but the first time we run it it cleans some things up.
-      puts cmd "cd #{deploy_directory}/apogee && mrt bundle /tmp/apogee.tar.gz"
-      puts cmd "cd #{deploy_directory} && tar -xf /tmp/apogee.tar.gz"
-      cmd "rm /tmp/apogee.tar.gz"
+      puts cmd "cd #{deploy_directory}/apogee && mrt --help"
+      puts cmd "cd #{deploy_directory}/apogee && mrt bundle #{tarfile}"
+      puts cmd "cd #{deploy_directory} && tar -xf #{tarfile}"
+      cmd "rm #{tarfile}"
+      if include_tests
+        puts cmd "cd #{deploy_directory}/apogee && METEOR_MOCHA_TEST_DIRS=/home/ubuntu/current-deploy/tests/web mrt bundle #{test_tarfile}"
+        puts cmd "cd /tmp && tar -xf #{test_tarfile} && mv /tmp/bundle /home/ubuntu/#{deploy_directory}/bundle-test"
+      end
     end
 
     def set_current
-      cmd "rm current-deploy || echo \"No current-deploy dir.\""
+      cmd "rm -f current-deploy"
       puts cmd "ln -s #{deploy_directory} current-deploy"
     end
 
     def set_last_release
-      cmd "rm last-deploy || echo \"No last deploy directory\""
+      cmd "rm -f last-deploy"
       puts cmd "ln -s #{deploy_directory} last-deploy"      
     end
 
@@ -149,6 +162,7 @@ if /deploy\.rb/ =~ $PROGRAM_NAME
 #    opts.on("-v", "--verbose", "Verbose output") {|v| deployer.verbose = true}
     opts.on("--vagrant", "Use Vagrant") {|v| deployer.is_vagrant = true}
     opts.on("--ec2", "Use EC2") {|v| deployer.is_ec2 = true}
+    opts.on("--include-tests", "Include test apps for meteor-mocha tests") {|v| deployer.include_tests = true}
     opts.on("--server [SERVER]", "Specify Server", String, "Server to deploy to") {|server| deployer.server = server}
     opts.on("--branch [BRANCH]", String, "Branch being deployed (developer branch -> staging, master -> prod)") {|branch| deployer.branch = branch}
     opts.on("--reset", "(Vagrant only) destroy previous vagrant instances") do |v|
