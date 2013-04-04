@@ -88,10 +88,10 @@ if Meteor.isClient
               file = Files.findOne path: fileData.path
               return unless file
               computation.stop()
-            projectId = result.projectId
-            connectDementor projectId, (response) ->
-              addDementorFile file, ->
-                done()
+              projectId = result.projectId
+              connectDementor projectId, (response) ->
+                addDementorFile file, ->
+                  done()
 
         after (done) ->
           disconnectDementor projectId, done
@@ -165,7 +165,10 @@ if Meteor.isClient
                 editorState.loadFile file, (err) ->
                   assert.isNull err
                   editorState.getEditor().setValue "Something you should never see."
-                  editorState.revertFile done
+                  #give some time for this text to be inserted in shareJS
+                  Meteor.setTimeout ->
+                    editorState.revertFile done
+                  , 50
 
         after (done) ->
           disconnectDementor projectId, done
