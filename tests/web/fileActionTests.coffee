@@ -82,17 +82,16 @@ if Meteor.isClient
           aceMode: ->
 
         before (done) ->
-          Meteor.autorun (computation)->
-            file = Files.findOne path: fileData.path
-            return unless file
-            computation.stop()
-            editorState = setupEditor editorId
-
-            createFakeProject [fileData], (result) ->
-              projectId = result.projectId
-              connectDementor projectId, (response) ->
-                addDementorFile file, ->
-                  done()
+          editorState = setupEditor editorId
+          createFakeProject [fileData], (result) ->
+            Meteor.autorun (computation)->
+              file = Files.findOne path: fileData.path
+              return unless file
+              computation.stop()
+            projectId = result.projectId
+            connectDementor projectId, (response) ->
+              addDementorFile file, ->
+                done()
 
         after (done) ->
           disconnectDementor projectId, done
