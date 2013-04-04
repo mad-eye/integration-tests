@@ -81,17 +81,18 @@ if Meteor.isClient
           contents : 'A happy duck is a warm duck.'
           aceMode: ->
 
-        Meteor.autorun ->
-          file = Files.findOne path: fileData.path
-
         before (done) ->
-          editorState = setupEditor editorId
+          Meteor.autorun (computation)->
+            file = Files.findOne path: fileData.path
+            return unless file
+            computation.stop()
+            editorState = setupEditor editorId
 
-          createFakeProject [fileData], (result) ->
-            projectId = result.projectId
-            connectDementor projectId, (response) ->
-              addDementorFile file, ->
-                done()
+            createFakeProject [fileData], (result) ->
+              projectId = result.projectId
+              connectDementor projectId, (response) ->
+                addDementorFile file, ->
+                  done()
 
         after (done) ->
           disconnectDementor projectId, done
