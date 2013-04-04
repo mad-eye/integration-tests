@@ -1,5 +1,5 @@
 appendEditor = (editorId) ->
-  $("<p><div id='#{editorId}' style='height:40px; width: 300px; position: relative; float: left; margin-right: 15px;'></div></p>").appendTo $("#tests")
+  $("<p><div id='#{editorId}' style='height:40px; width: 300px; position: relative; float: left; margin-right: 15px; margin-bottom: 30px;'></div></p>").appendTo $("#tests")
 
 
 Meteor.startup ->
