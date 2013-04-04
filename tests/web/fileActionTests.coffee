@@ -114,20 +114,22 @@ if Meteor.isClient
           aceMode: ->
 
         newContents = "Run for the hills, little ducky."
-        Meteor.autorun ->
-          file = Files.findOne path: fileData.path
 
-        before (done) ->
+        before (done) ->          
           editorState = setupEditor editorId
 
           createFakeProject [fileData], (result) ->
-            projectId = result.projectId
-            connectDementor projectId, (response) ->
-              addDementorFile file, ->
-                editorState.loadFile file, (err) ->
-                  assert.isNull err
-                  editorState.getEditor().setValue newContents
-                  editorState.save done
+            Meteor.autorun (computation)->
+              file = Files.findOne path: fileData.path
+              return unless file
+              computation.stop()
+              projectId = result.projectId
+              connectDementor projectId, (response) ->
+                addDementorFile file, ->
+                  editorState.loadFile file, (err) ->
+                    assert.isNull err
+                    editorState.getEditor().setValue newContents
+                    editorState.save done
 
         after (done) ->
           disconnectDementor projectId, done
@@ -152,23 +154,24 @@ if Meteor.isClient
           contents : 'Sometimes, ducky is gone.'
           aceMode: ->
 
-        Meteor.autorun ->
-          file = Files.findOne path: fileData.path
-
         before (done) ->
-          editorState = setupEditor editorId
-
           createFakeProject [fileData], (result) ->
             projectId = result.projectId
-            connectDementor projectId, (response) ->
-              addDementorFile file, ->
-                editorState.loadFile file, (err) ->
-                  assert.isNull err
-                  editorState.getEditor().setValue "Something you should never see."
-                  #give some time for this text to be inserted in shareJS
-                  Meteor.setTimeout ->
-                    editorState.revertFile done
-                  , 50
+            Meteor.autorun (computation)->
+              file = Files.findOne path: fileData.path
+              return unless file
+              computation.stop()
+              editorState = setupEditor editorId
+  
+              connectDementor projectId, (response) ->
+                addDementorFile file, ->
+                  editorState.loadFile file, (err) ->
+                    assert.isNull err
+                    editorState.getEditor().setValue "Something you should never see."
+                    #give some time for this text to be inserted in shareJS
+                    Meteor.setTimeout ->
+                      editorState.revertFile done
+                    , 250
 
         after (done) ->
           disconnectDementor projectId, done

@@ -7,13 +7,16 @@ Meteor.startup ->
     assert = chai.assert
     describe "EditorState loadFile", ->
       Meteor.subscribe "fakeProject"
-      Meteor.autosubscribe ->
+      Deps.autorun ->
         Meteor.subscribe "files", Projects.findOne()?._id
 
 
       before (done)->
         Meteor.call "createFakeProject", [{path: "README.md"}, {path: "settings.json"}, {path: "BigFile.java"}, {path: "prophecy.js"}],  (err)->
-          done()
+          Deps.autorun (computation)->
+            if Files.find().length > 0
+              computation.stop()
+              done()
 
       it "populate the editor", (done)->
         editorId = "fakeEditor1"
@@ -32,18 +35,22 @@ Meteor.startup ->
       it "handles another user updating the file", (done)->
         editorId = "otherUserEditor"
         appendEditor editorId
-        file = Files.findOne path: "BigFile.java"
-        bolide.create file._id, ->
-          bolide.set file._id, bigFileContents, ->
-            editorState = new EditorState(editorId)
-            editorState.loadFile file, ->
-              assert.equal ace.edit(editorId).getValue(), bigFileContents
-              bolide.set file._id, "ORIGINAL CONTENTS", (err,resp)->
-                console.log "ERR, RESP", err, resp
-                Meteor.setTimeout ->
-                  assert.equal ace.edit(editorId).getValue(), "ORIGINAL CONTENTS"
-                  done()
-                ,0
+        file = null
+        Meteor.autorun (computation)->
+          file = Files.findOne path: "BigFile.java"
+          return unless file
+          computation.stop()
+          bolide.create file._id, ->
+            bolide.set file._id, bigFileContents, ->
+              editorState = new EditorState(editorId)
+              editorState.loadFile file, ->
+                assert.equal ace.edit(editorId).getValue(), bigFileContents
+                bolide.set file._id, "ORIGINAL CONTENTS", (err,resp)->
+                  console.log "ERR, RESP", err, resp
+                  Meteor.setTimeout ->
+                    assert.equal ace.edit(editorId).getValue(), "ORIGINAL CONTENTS"
+                    done()
+                  ,0
 
 
 bigFileContents = """
