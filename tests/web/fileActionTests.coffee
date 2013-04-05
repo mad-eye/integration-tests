@@ -65,6 +65,8 @@ if Meteor.isClient
         callback(response.data)
 
     describe "File Actions", ->
+      @timeout 10000
+
       projectId = null
       Meteor.subscribe "fakeProject"
       Meteor.autosubscribe ->
