@@ -97,7 +97,7 @@ class Deployer
       cmd "rm #{tarfile}"
       puts cmd "cd #{deploy_directory}/bundle/server && npm uninstall fibers && npm install fibers"
       if include_tests
-        puts cmd "cd #{deploy_directory}/apogee && METEOR_MOCHA_TEST_DIRS=/home/ubuntu/current-deploy/tests/web mrt bundle #{test_tarfile}"
+        puts cmd "cd #{deploy_directory}/apogee && export METEOR_MOCHA_TEST_DIRS=/home/ubuntu/current-deploy/tests/web && mrt bundle #{test_tarfile}"
         puts cmd "cd /tmp && tar -xf #{test_tarfile} && mv /tmp/bundle /home/ubuntu/#{deploy_directory}/bundle-test"
         puts cmd "cd #{deploy_directory}/bundle-test/server && npm uninstall fibers && npm install fibers"
       end
