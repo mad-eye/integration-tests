@@ -164,7 +164,7 @@ if Meteor.isClient
               return unless file
               computation.stop()
               editorState = setupEditor editorId
-  
+
               connectDementor projectId, (response) ->
                 addDementorFile file, ->
                   editorState.loadFile file, (err) ->
@@ -223,7 +223,6 @@ if Meteor.isClient
             contents : '1\r2\r3'
         }]
 
-
         before (done) ->
           editorState = setupEditor editorId
 
@@ -232,10 +231,11 @@ if Meteor.isClient
             files = result.files
             console.log "Retrieved files", files
             for f in files
-              console.log "Adding file to weirdFiles:", f
+              console.log "Adding file to weirdFiles:", f    
+              f = _.pick f, "_id", "projectId", "path", "orderingPath", "isDir"
               f.aceMode = ->
-              weirdFiles[f.path] = new File(f)
-            console.log "Added weirdFiles:", weirdFiles
+              weirdFiles[f.path] = new MadEye.File f
+            #console.log "Added weirdFiles:", weirdFiles
             connectDementor projectId, (response) ->
               addDementorFiles files, ->
                 done()
