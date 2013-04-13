@@ -16,7 +16,7 @@ system = require('system')
 url = system.env.PROJECT_URL
 console.log "URL = #{url}"
 
-casper.options.timeout = 15000
+casper.options.timeout = 45000
 
 casper.start url, ->
   casper = require('casper').create()
