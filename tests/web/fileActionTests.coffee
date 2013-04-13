@@ -15,7 +15,7 @@ if Meteor.isClient
     createFakeProject = (files, callback) ->
       Meteor.call 'createFakeProject', files, (error, result) ->
         assert.isUndefined error
-        console.log "created project:", result
+        #console.log "created project:", result
         Meteor.flush()
         callback result
 
@@ -229,11 +229,9 @@ if Meteor.isClient
           createFakeProject weirdFileData, (result) ->
             projectId = result.projectId
             files = result.files
-            console.log "Retrieved files", files
+            #console.log "Retrieved files", files
             for f in files
-              console.log "Adding file to weirdFiles:", f    
               f = _.pick f, "_id", "projectId", "path", "orderingPath", "isDir"
-              f.aceMode = ->
               weirdFiles[f.path] = new MadEye.File f
             #console.log "Added weirdFiles:", weirdFiles
             connectDementor projectId, (response) ->
