@@ -1,10 +1,9 @@
 #! /usr/bin/env ruby
 
 require "optparse"
-require "vagrant"
 
 class Deployer
-  attr_accessor :is_ec2, :is_vagrant, :branch, :server, :include_tests
+  attr_accessor :branch, :server, :include_tests
 
   def deploy
     instances = create_instances
@@ -23,18 +22,7 @@ class Deployer
   end
 
   def create_instances
-    if is_vagrant
-      create_vagrant_instances
-    elsif is_ec2
-      create_ec2_instances
-    end
-  end
-
-  def create_vagrant_instances
-    puts "creating vagrant instances"
-    env = Vagrant::Environment.new
-    env.cli("up")
-    [VagrantInstance.new("192.168.1.11")]
+    create_ec2_instances
   end
 
   def create_ec2_instances
@@ -108,7 +96,7 @@ class Deployer
       puts cmd "cd #{deploy_directory} && tar -xf #{tarfile}"
       cmd "rm #{tarfile}"
       if include_tests
-        puts cmd "cd #{deploy_directory}/apogee && METEOR_MOCHA_TEST_DIRS=/home/ubuntu/current-deploy/tests/web mrt bundle #{test_tarfile}"
+        puts cmd "cd #{deploy_directory}/apogee && export METEOR_MOCHA_TEST_DIRS=/home/ubuntu/#{deploy_directory}/tests/web && mrt bundle #{test_tarfile}"
         puts cmd "cd /tmp && tar -xf #{test_tarfile} && mv /tmp/bundle /home/ubuntu/#{deploy_directory}/bundle-test"
       end
     end
@@ -141,12 +129,6 @@ class Deployer
     end
   end
 
-  class VagrantInstance < Instance
-    def user
-      "vagrant"
-    end
-  end
-
   class EC2Instance < Instance
     def user
       "ubuntu"
@@ -160,17 +142,9 @@ if /deploy\.rb/ =~ $PROGRAM_NAME
   OptionParser.new do |opts|
     opts.banner = "Usage: deploy.rb [options]"
 #    opts.on("-v", "--verbose", "Verbose output") {|v| deployer.verbose = true}
-    opts.on("--vagrant", "Use Vagrant") {|v| deployer.is_vagrant = true}
-    opts.on("--ec2", "Use EC2") {|v| deployer.is_ec2 = true}
     opts.on("--include-tests", "Include test apps for meteor-mocha tests") {|v| deployer.include_tests = true}
     opts.on("--server [SERVER]", "Specify Server", String, "Server to deploy to") {|server| deployer.server = server}
     opts.on("--branch [BRANCH]", String, "Branch being deployed (developer branch -> staging, master -> prod)") {|branch| deployer.branch = branch}
-    opts.on("--reset", "(Vagrant only) destroy previous vagrant instances") do |v|
-      deployer.is_ec2 = true
-    end
-    if deployer.is_ec2 and deployer.is_vagrant
-      abort("Cannot choose ec2 and vagrant")
-    end
   end.parse!
   deployer.deploy
 end

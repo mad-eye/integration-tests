@@ -1,49 +1,56 @@
 appendEditor = (editorId) ->
-  $("<p><div id='#{editorId}' style='height:40px; width: 300px; position: relative; float: left; margin-right: 15px;'></div></p>").appendTo $("#tests")
+  $("<p><div id='#{editorId}' style='height:40px; width: 300px; position: relative; float: left; margin-right: 15px; margin-bottom: 30px;'></div></p>").appendTo $("#tests")
 
 
-Meteor.startup ->
-  if Meteor.isClient
-    assert = chai.assert
-    describe "EditorState loadFile", ->
-      Meteor.subscribe "fakeProject"
-      Meteor.autosubscribe ->
-        Meteor.subscribe "files", Projects.findOne()?._id
+# Meteor.startup ->
+#   if Meteor.isClient
+#     assert = chai.assert
+#     describe "EditorState loadFile", ->
+#       Meteor.subscribe "fakeProject"
+#       Deps.autorun ->
+#         Meteor.subscribe "files", Projects.findOne()?._id
 
 
-      before (done)->
-        Meteor.call "createFakeProject", [{path: "README.md"}, {path: "settings.json"}, {path: "BigFile.java"}, {path: "prophecy.js"}],  (err)->
-          done()
+#       before (done)->
+#         Meteor.call "createFakeProject", [{path: "README.md"}, {path: "settings.json"}, {path: "BigFile.java"}, {path: "prophecy.js"}],  (err)->
+#           Deps.autorun (computation)->
+#             if Files.find().length > 0
+#               computation.stop()
+#               done()
 
-      it "populate the editor", (done)->
-        editorId = "fakeEditor1"
-        appendEditor editorId
-        file = Files.findOne path: "README.md"
-        bolide.create file._id, ->
-          bolide.set file._id, "new doc contents", ->
-            editorState = new EditorState(editorId)
-            editorState.loadFile file, ->
-              assert.equal ace.edit(editorId).getValue(), "new doc contents"
-              done()
+#       it "populate the editor", (done)->
+#         editorId = "fakeEditor1"
+#         appendEditor editorId
+#         file = Files.findOne path: "README.md"
+#         bolide.create file._id, ->
+#           bolide.set file._id, "new doc contents", ->
+#             editorState = new EditorState(editorId)
+#             editorState.loadFile file, ->
+#               assert.equal ace.edit(editorId).getValue(), "new doc contents"
+#               done()
 
-        #TODO cleanup (remove the editor, detach ace)
+#         #TODO cleanup (remove the editor, detach ace)
 
-    describe "other user modifications", ->
-      it "handles another user updating the file", (done)->
-        editorId = "otherUserEditor"
-        appendEditor editorId
-        file = Files.findOne path: "BigFile.java"
-        bolide.create file._id, ->
-          bolide.set file._id, bigFileContents, ->
-            editorState = new EditorState(editorId)
-            editorState.loadFile file, ->
-              assert.equal ace.edit(editorId).getValue(), bigFileContents
-              bolide.set file._id, "ORIGINAL CONTENTS", (err,resp)->
-                console.log "ERR, RESP", err, resp
-                Meteor.setTimeout ->
-                  assert.equal ace.edit(editorId).getValue(), "ORIGINAL CONTENTS"
-                  done()
-                ,0
+#     describe "other user modifications", ->
+#       it "handles another user updating the file", (done)->
+#         editorId = "otherUserEditor"
+#         appendEditor editorId
+#         file = null
+#         Meteor.autorun (computation)->
+#           file = Files.findOne path: "BigFile.java"
+#           return unless file
+#           computation.stop()
+#           bolide.create file._id, ->
+#             bolide.set file._id, bigFileContents, ->
+#               editorState = new EditorState(editorId)
+#               editorState.loadFile file, ->
+#                 assert.equal ace.edit(editorId).getValue(), bigFileContents
+#                 bolide.set file._id, "ORIGINAL CONTENTS", (err,resp)->
+#                   console.log "ERR, RESP", err, resp
+#                   Meteor.setTimeout ->
+#                     assert.equal ace.edit(editorId).getValue(), "ORIGINAL CONTENTS"
+#                     done()
+#                   ,0
 
 
 bigFileContents = """

@@ -15,7 +15,7 @@ if Meteor.isClient
     createFakeProject = (files, callback) ->
       Meteor.call 'createFakeProject', files, (error, result) ->
         assert.isUndefined error
-        console.log "created project:", result
+        #console.log "created project:", result
         Meteor.flush()
         callback result
 
@@ -65,6 +65,8 @@ if Meteor.isClient
         callback(response.data)
 
     describe "File Actions", ->
+      @timeout 10000
+
       projectId = null
       Meteor.subscribe "fakeProject"
       Meteor.autosubscribe ->
@@ -81,17 +83,17 @@ if Meteor.isClient
           contents : 'A happy duck is a warm duck.'
           aceMode: ->
 
-        Meteor.autorun ->
-          file = Files.findOne path: fileData.path
-
         before (done) ->
           editorState = setupEditor editorId
-
           createFakeProject [fileData], (result) ->
-            projectId = result.projectId
-            connectDementor projectId, (response) ->
-              addDementorFile file, ->
-                done()
+            Meteor.autorun (computation)->
+              file = Files.findOne path: fileData.path
+              return unless file
+              computation.stop()
+              projectId = result.projectId
+              connectDementor projectId, (response) ->
+                addDementorFile file, ->
+                  done()
 
         after (done) ->
           disconnectDementor projectId, done
@@ -114,20 +116,22 @@ if Meteor.isClient
           aceMode: ->
 
         newContents = "Run for the hills, little ducky."
-        Meteor.autorun ->
-          file = Files.findOne path: fileData.path
 
-        before (done) ->
+        before (done) ->          
           editorState = setupEditor editorId
 
           createFakeProject [fileData], (result) ->
-            projectId = result.projectId
-            connectDementor projectId, (response) ->
-              addDementorFile file, ->
-                editorState.loadFile file, (err) ->
-                  assert.isNull err
-                  editorState.getEditor().setValue newContents
-                  editorState.save done
+            Meteor.autorun (computation)->
+              file = Files.findOne path: fileData.path
+              return unless file
+              computation.stop()
+              projectId = result.projectId
+              connectDementor projectId, (response) ->
+                addDementorFile file, ->
+                  editorState.loadFile file, (err) ->
+                    assert.isNull err
+                    editorState.getEditor().setValue newContents
+                    editorState.save done
 
         after (done) ->
           disconnectDementor projectId, done
@@ -152,20 +156,24 @@ if Meteor.isClient
           contents : 'Sometimes, ducky is gone.'
           aceMode: ->
 
-        Meteor.autorun ->
-          file = Files.findOne path: fileData.path
-
         before (done) ->
-          editorState = setupEditor editorId
-
           createFakeProject [fileData], (result) ->
             projectId = result.projectId
-            connectDementor projectId, (response) ->
-              addDementorFile file, ->
-                editorState.loadFile file, (err) ->
-                  assert.isNull err
-                  editorState.getEditor().setValue "Something you should never see."
-                  editorState.revertFile done
+            Meteor.autorun (computation)->
+              file = Files.findOne path: fileData.path
+              return unless file
+              computation.stop()
+              editorState = setupEditor editorId
+
+              connectDementor projectId, (response) ->
+                addDementorFile file, ->
+                  editorState.loadFile file, (err) ->
+                    assert.isNull err
+                    editorState.getEditor().setValue "Something you should never see."
+                    #give some time for this text to be inserted in shareJS
+                    Meteor.setTimeout ->
+                      editorState.revertFile done
+                    , 250
 
         after (done) ->
           disconnectDementor projectId, done
@@ -215,19 +223,17 @@ if Meteor.isClient
             contents : '1\r2\r3'
         }]
 
-
         before (done) ->
           editorState = setupEditor editorId
 
           createFakeProject weirdFileData, (result) ->
             projectId = result.projectId
             files = result.files
-            console.log "Retrieved files", files
+            #console.log "Retrieved files", files
             for f in files
-              console.log "Adding file to weirdFiles:", f
-              f.aceMode = ->
-              weirdFiles[f.path] = new File(f)
-            console.log "Added weirdFiles:", weirdFiles
+              f = _.pick f, "_id", "projectId", "path", "orderingPath", "isDir"
+              weirdFiles[f.path] = new MadEye.File f
+            #console.log "Added weirdFiles:", weirdFiles
             connectDementor projectId, (response) ->
               addDementorFiles files, ->
                 done()

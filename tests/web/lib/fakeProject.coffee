@@ -4,7 +4,7 @@ Meteor.startup ->
     addFiles = (projectId, files=[]) ->
       savedFiles = []
       for f in files
-        file = new File f
+        file = new MadEye.File f
         file.projectId =  projectId
         file.modified_locally = f.modified_locally ? false
         file.isDir = f.isDir ? false
