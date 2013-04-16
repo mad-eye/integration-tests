@@ -14,7 +14,8 @@ if Meteor.isClient
     #callback: (projectId) ->
     createFakeProject = (files, callback) ->
       Meteor.call 'createFakeProject', files, (error, result) ->
-        assert.isUndefined error
+        Session.set "projectId", result.projectId
+        assert.ok !error
         #console.log "created project:", result
         Meteor.flush()
         callback result
