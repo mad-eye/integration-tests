@@ -17,8 +17,11 @@ if Meteor.isClient
         Session.set "projectId", result.projectId
         assert.ok !error
         #console.log "created project:", result
-        Meteor.flush()
-        callback result
+        Deps.autorun (computation)->
+          console.log "AUTORUNNIN'"
+          if Files.find({projectId: result.projectId}).count() == files.length
+            computation.stop()
+            callback result
 
     #callback: (projectId) ->
     connectDementor = (projectId, callback) ->
@@ -86,14 +89,11 @@ if Meteor.isClient
         before (done) ->
           window.editorState = setupEditor editorId
           createFakeProject [fileData], (result) ->
-            Meteor.autorun (computation)->
-              file = Files.findOne path: fileData.path
-              return unless file
-              computation.stop()
-              projectId = result.projectId
-              connectDementor projectId, (response) ->
-                addDementorFile file, ->
-                  done()
+            file = Files.findOne path: fileData.path
+            projectId = result.projectId
+            connectDementor projectId, (response) ->
+              addDementorFile file, ->
+                done()
 
         after (done) ->
           disconnectDementor projectId, done
@@ -121,17 +121,14 @@ if Meteor.isClient
           editorState = setupEditor editorId
 
           createFakeProject [fileData], (result) ->
-            Meteor.autorun (computation)->
-              file = Files.findOne path: fileData.path
-              return unless file
-              computation.stop()
-              projectId = result.projectId
-              connectDementor projectId, (response) ->
-                addDementorFile file, ->
-                  editorState.loadFile file, (err) ->
-                    assert.isNull err
-                    editorState.getEditor().setValue newContents
-                    editorState.save done
+            file = Files.findOne path: fileData.path
+            projectId = result.projectId
+            connectDementor projectId, (response) ->
+              addDementorFile file, ->
+                editorState.loadFile file, (err) ->
+                  assert.isNull err
+                  editorState.getEditor().setValue newContents
+                  editorState.save done
 
         after (done) ->
           disconnectDementor projectId, done
@@ -159,21 +156,18 @@ if Meteor.isClient
         before (done) ->
           createFakeProject [fileData], (result) ->
             projectId = result.projectId
-            Meteor.autorun (computation)->
-              file = Files.findOne path: fileData.path
-              return unless file
-              computation.stop()
-              editorState = setupEditor editorId
+            file = Files.findOne path: fileData.path
+            editorState = setupEditor editorId
 
-              connectDementor projectId, (response) ->
-                addDementorFile file, ->
-                  editorState.loadFile file, (err) ->
-                    assert.isNull err
-                    editorState.getEditor().setValue "Something you should never see."
-                    #give some time for this text to be inserted in shareJS
-                    Meteor.setTimeout ->
-                      editorState.revertFile done
-                    , 250
+            connectDementor projectId, (response) ->
+              addDementorFile file, ->
+                editorState.loadFile file, (err) ->
+                  assert.isNull err
+                  editorState.getEditor().setValue "Something you should never see."
+                  #give some time for this text to be inserted in shareJS
+                  Meteor.setTimeout ->
+                    editorState.revertFile done
+                  , 250
 
         after (done) ->
           disconnectDementor projectId, done
