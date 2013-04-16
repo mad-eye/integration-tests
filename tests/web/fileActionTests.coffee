@@ -73,7 +73,6 @@ if Meteor.isClient
         Meteor.subscribe "files", Projects.findOne()?._id
 
       describe "on request file", ->
-        editorState = null
         editorId = "editor" + randomId()
 
         file = null
@@ -84,7 +83,7 @@ if Meteor.isClient
           aceMode: ->
 
         before (done) ->
-          editorState = setupEditor editorId
+          window.editorState = setupEditor editorId
           createFakeProject [fileData], (result) ->
             Meteor.autorun (computation)->
               file = Files.findOne path: fileData.path
