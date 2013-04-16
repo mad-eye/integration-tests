@@ -16,13 +16,13 @@ Meteor.startup ->
 
 
     Meteor.publish "fakeProject", ->
-      Projects.collection.find({test: true}, {sort: {date: -1}})
+      Projects.find({test: true}, {sort: {date: -1}})
 
     Meteor.methods
       #TODO allow dir structure to be passed in
       createFakeProject: (files) ->
         @unblock()
-        Projects.collection.remove {test: true}
+        Projects.remove {test: true}
         project = new Project
         project.test = true
         project.save()
