@@ -22,6 +22,9 @@ if Meteor.isClient
           if Files.find({projectId: result.projectId}).count() == files.length
             computation.stop()
             callback result
+        Meteor.subscribe "fakeProject"
+        Meteor.autosubscribe ->
+          Meteor.subscribe "files", Projects.findOne(result.projectId)?._id
 
     #callback: (projectId) ->
     connectDementor = (projectId, callback) ->
@@ -72,10 +75,6 @@ if Meteor.isClient
       @timeout 10000
 
       projectId = null
-      Meteor.subscribe "fakeProject"
-      Meteor.autosubscribe ->
-        Meteor.subscribe "files", Projects.findOne()?._id
-
       describe "on request file", ->
         editorId = "editor" + randomId()
 
