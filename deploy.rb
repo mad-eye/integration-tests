@@ -112,7 +112,7 @@ class Deployer
     end
 
     def prune_releases
-      number_to_keep = 10
+      number_to_keep = 8
       releases = cmd("ls -1dt deploy-*").split("\n")
       return if releases.length <= number_to_keep
       cmd "rm -r #{releases[number_to_keep..-1].join ' '}"
