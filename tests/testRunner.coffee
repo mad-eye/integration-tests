@@ -2,9 +2,14 @@ spawn = require('child_process').spawn
 util = require "util"
 
 dementor = null
-startDementor = (callback)->
+startDementor = (clean, callback)->
   #TODO should be resetting this directory
-  dementor = spawn "../../dementor/bin/madeye.js", null, {cwd: "tests/fake-project"}
+  if clean
+    args = ["--clean"]
+    console.log "Starting clean dementor."
+  else
+    args = null
+  dementor = spawn "../../dementor/bin/madeye.js", args, {cwd: "tests/fake-project"}
   dementor.stdout.on "data", (data)->
     if match = not /hangout/.exec(data) and  /http[-\w\d\/:\.]*/.exec(data)
       callback match[0]
@@ -17,10 +22,9 @@ startDementor = (callback)->
       process.exit(1)
     # console.log "Dementor exited with status #{code}"
 
-#after starting dementor run casperjs against the madeye server
-startDementor (projectUrl)->
+runCasper = (projectUrl, tests, callback) ->
   process.env.PROJECT_URL = projectUrl
-  casperJs = spawn "casperjs", ["test", "tests/happyPathTest.coffee"]
+  casperJs = spawn "casperjs", ["test"].concat tests
   casperJs.stdout.on "data", (data)->
     console.log "CASPERJS STDOUT #{data}"
   casperJs.stderr.on "data", (data)->
@@ -28,4 +32,13 @@ startDementor (projectUrl)->
   casperJs.on "exit", (code)->
     # console.log "casper exited with #{code}"
     dementor.kill()
-    process.exit(code)
+    callback code
+
+
+#after starting dementor run casperjs against the madeye server
+startDementor true, (projectUrl) ->
+  runCasper projectUrl, ["tests/happyPathTest.coffee"], (code) ->
+    return process.exit(code) if code
+    startDementor false, (projectUrl) ->
+      runCasper projectUrl, ["tests/happyPathTest.coffee"], (code) ->
+        process.exit(code)
