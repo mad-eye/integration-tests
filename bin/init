@@ -15,6 +15,7 @@ git submodule update --init --recursive
 (cd dementor && bin/init $production)
 (cd madeye-ops && bin/init $production)
 (cd boggart && bin/init $production)
+(cd nurmengard && bin/init $production)
 #No production, because we need mocha for integration tests.
 npm install -q
 
