@@ -13,6 +13,8 @@ startDementor = (clean, callback)->
   dementor.stdout.on "data", (data)->
     if match = not /hangout/.exec(data) and  /http[-\w\d\/:\.]*/.exec(data)
       callback match[0]
+    else
+      console.log "NO MATCH"
     util.print "DEMENTOR STDOUT: #{data}"
   dementor.stderr.on "data", (data)->
     util.print "DEMENTOR STDERR: #{data}"
