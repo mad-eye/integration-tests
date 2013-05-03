@@ -13,6 +13,8 @@ startDementor = (clean, callback)->
   dementor.stdout.on "data", (data)->
     if match = not /hangout/.exec(data) and  /http[-\w\d\/:\.]*/.exec(data)
       callback match[0]
+    else
+      console.log "NO MATCH"
     util.print "DEMENTOR STDOUT: #{data}"
   dementor.stderr.on "data", (data)->
     util.print "DEMENTOR STDERR: #{data}"
@@ -23,14 +25,16 @@ startDementor = (clean, callback)->
     # console.log "Dementor exited with status #{code}"
 
 runCasper = (projectUrl, tests, callback) ->
+  console.log "SPAWNING CASPER PROCESS"
   process.env.PROJECT_URL = projectUrl
   casperJs = spawn "casperjs", ["test"].concat tests
+  console.log "CASPER SPAWNED"
   casperJs.stdout.on "data", (data)->
     console.log "CASPERJS STDOUT #{data}"
   casperJs.stderr.on "data", (data)->
     console.log "CASPERJS STDERR #{data}"
   casperJs.on "exit", (code)->
-    # console.log "casper exited with #{code}"
+    console.log "casper exited with exit code #{code}"
     dementor.kill()
     callback code
 
@@ -40,5 +44,6 @@ startDementor true, (projectUrl) ->
   runCasper projectUrl, ["tests/happyPathTest.coffee"], (code) ->
     return process.exit(code) if code
     startDementor false, (projectUrl) ->
+      console.log "STARTING CASPER"
       runCasper projectUrl, ["tests/happyPathTest.coffee"], (code) ->
         process.exit(code)
