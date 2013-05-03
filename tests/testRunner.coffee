@@ -10,12 +10,17 @@ startDementor = (clean, callback)->
   else
     args = null
   dementor = spawn "../../dementor/bin/madeye.js", args, {cwd: "tests/fake-project"}
+  regex = /https?:\/\/[\w.:]+\/edit\/[-\w]+/
+  goneOnce = false
   dementor.stdout.on "data", (data)->
-    if match = not /hangout/.exec(data) and  /http[-\w\d\/:\.]*/.exec(data)
+    data = data.toString()
+    util.print "DEMENTOR STDOUT: #{data}"
+    return if goneOnce
+    if match = regex.exec(data)
       callback match[0]
+      goneOnce = true
     else
       console.log "NO MATCH"
-    util.print "DEMENTOR STDOUT: #{data}"
   dementor.stderr.on "data", (data)->
     util.print "DEMENTOR STDERR: #{data}"
   dementor.on "exit", (code)->
