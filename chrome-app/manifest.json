@@ -1,0 +1,17 @@
+{
+  "name": "MadEye",
+  "description": "Remote pair programming in the browser, synced with your local filesystem",
+  "version": "0.0.0.1",
+  "manifest_version": 2,
+  "icons": {
+    "128": "logo.png"
+  },
+  "app": {
+    "urls": [
+      "http://staging.madeye.io/"
+    ],
+    "launch": {
+      "web_url": "http://staging.madeye.io/"
+    }
+  }
+}

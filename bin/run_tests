@@ -1,1 +1,3 @@
+set -e
+mocha-phantomjs $MADEYE_APOGEE_URL/tests
 coffee tests/testRunner.coffee

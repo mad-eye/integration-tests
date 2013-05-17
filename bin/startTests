@@ -1,0 +1,23 @@
+#! /bin/sh
+
+pushd `dirname $0` > /dev/null
+basedir=`pwd`
+popd > /dev/null
+integrationDir=`dirname $basedir`
+
+apogeeTestDir=$integrationDir/apogee/tests
+webTestDir=$integrationDir/tests/web
+case $1 in
+  "apogee") METEOR_MOCHA_TEST_DIRS=$apogeeTestDir;;
+    
+  "web") METEOR_MOCHA_TEST_DIRS=$webTestDir;;
+
+  "all") METEOR_MOCHA_TEST_DIRS=$apogeeTestDir:$webTestDir;;
+
+  *)
+   echo "Unkown test type.  Should be apogee, web, or all"
+   exit 1;;
+esac
+
+echo Using METEOR_MOCHA_TEST_DIRS $METEOR_MOCHA_TEST_DIRS
+(cd $basedir/../apogee && foreman start)
