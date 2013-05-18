@@ -14,8 +14,10 @@ case $1 in
 
   "all") METEOR_MOCHA_TEST_DIRS=$apogeeTestDir:$webTestDir;;
 
+  "none") METEOR_MOCHA_TEST_DIRS="";;
+
   *)
-   echo "Unkown test type.  Should be apogee, web, or all"
+   echo "Unkown test type.  Should be apogee, web, all, or none"
    exit 1;;
 esac
 
