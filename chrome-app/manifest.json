@@ -8,10 +8,10 @@
   },
   "app": {
     "urls": [
-      "http://staging.madeye.io/"
+      "http://madeye.io/"
     ],
     "launch": {
-      "web_url": "http://staging.madeye.io/"
+      "web_url": "http://madeye.io/"
     }
   }
 }
