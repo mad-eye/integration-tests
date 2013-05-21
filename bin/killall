@@ -1,5 +1,21 @@
-#! /bin/sh
+#! /bin/bash
 
-pkill node
-pkill redis
-pkill mongo
+if [ -z "$1" ]; then
+    pkill node
+    pkill redis
+    pkill mongo
+    exit 0
+fi
+
+case $1 in
+    "apogee"|"azkaban"|"bolide"|"boggart"|"nurmengard")
+        pgrep node | xargs ps | grep "$1" | awk '{print $1}' | xargs kill
+        ;;
+    "mongo")
+        pkill mongo;;
+    "redis")
+        pkill redis;;
+    *)
+        echo "Unknown service $1"
+        exit 1
+esac
