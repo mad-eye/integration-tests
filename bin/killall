@@ -7,9 +7,28 @@ if [ -z "$1" ]; then
     exit 0
 fi
 
+function killprog {
+    pgrep $1 | xargs ps | grep "$2" | awk '{print $1}' | xargs kill
+}
+
 case $1 in
-    "apogee"|"azkaban"|"bolide"|"boggart"|"nurmengard")
-        pgrep node | xargs ps | grep "$1" | awk '{print $1}' | xargs kill
+    "apogee")
+        killprog node mrt
+        killprog node meteor
+        ;;
+    "azkaban"|"bolide"|"boggart"|"nurmengard")
+        killprog node $1
+        ;;
+    "startTests")
+        killprog bash $1
+        ;;
+    "apps")
+        killprog node mrt
+        killprog node meteor
+        killprog node azkaban
+        killprog node bolide
+        killprog node boggart
+        killprog node nurmengard
         ;;
     "mongo")
         pkill mongo;;

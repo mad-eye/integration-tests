@@ -1,0 +1,19 @@
+#! /bin/bash
+set -e
+
+pushd `dirname $0` > /dev/null
+basedir=`pwd`
+popd > /dev/null
+integrationDir=`dirname $basedir`
+
+for dir in apogee azkaban bolide dementor nurmengard madeye-common madeye-ops; do
+    echo Executing $dir tests
+    cd "$integrationDir/$dir"
+    bin="bin"
+    if [ "$dir" = "apogee" ]; then
+      bin=".bin"
+    fi
+    if [ "$dir" != "madeye-ops" ]; then
+      $integrationDir/$dir/$bin/run_tests
+    fi
+done

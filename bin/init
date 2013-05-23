@@ -1,18 +1,26 @@
 #! /bin/sh
 
+production=""
+#FIXME: Hack to allow us to not submodule update.  Should use getopts.
+submodules=1
+
 #Use --production to npm install --production
 if [ "$1" = "--production" ]; then
     production="--production"
     echo Using production flag: $production
-else
-    production=""
+elif [ "$1" = "--noupdate" ]; then
+    submodules=0
+    echo Not updating git submodules.
 fi
 
-git submodule update --init --recursive
+if [ "$submodules" -eq 1 ]; then
+    git submodule update --init --recursive
+fi
 (cd apogee && .bin/init)
 (cd azkaban && bin/init $production)
 (cd bolide && bin/init $production)
 (cd dementor && bin/init $production)
+(cd madeye-common && bin/init $production)
 (cd madeye-ops && bin/init $production)
 (cd boggart && bin/init $production)
 (cd nurmengard && bin/init $production)
