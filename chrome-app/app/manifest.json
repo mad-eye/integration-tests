@@ -1,7 +1,7 @@
 {
   "name": "MadEye",
   "description": "Remote pair programming in the browser, synced with your local filesystem",
-  "version": "0.0.0.1",
+  "version": "0.1.5",
   "manifest_version": 2,
   "icons": {
     "128": "logo.png"

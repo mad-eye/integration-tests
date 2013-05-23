@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 pushd `dirname $0` > /dev/null
 basedir=`pwd`
@@ -14,10 +14,22 @@ case $1 in
 
   "all") METEOR_MOCHA_TEST_DIRS=$apogeeTestDir:$webTestDir;;
 
+  "none") METEOR_MOCHA_TEST_DIRS="";;
+
   *)
-   echo "Unkown test type.  Should be apogee, web, or all"
+   echo "Unkown test type.  Should be apogee, web, all, or none"
    exit 1;;
+
 esac
 
 echo Using METEOR_MOCHA_TEST_DIRS $METEOR_MOCHA_TEST_DIRS
-(cd $basedir/../apogee && foreman start)
+export METEOR_MOCHA_TEST_DIRS
+
+#Don't start persistence services, which may be running on your machine.
+if [ "$2" = "--apps" ]; then
+    FORMATION=--formation="mongo=0,redis=0,bolide=1,boggart=1,nurmengard=1,apogee=1,azkaban=1"
+fi
+
+echo Using FORMATION $FORMATION
+cd $basedir/../apogee && foreman start $FORMATION
+

@@ -1,0 +1,40 @@
+#! /bin/bash
+
+if [ -z "$1" ]; then
+    pkill node
+    pkill redis
+    pkill mongo
+    exit 0
+fi
+
+function killprog {
+    pgrep $1 | xargs ps | grep "$2" | awk '{print $1}' | xargs kill
+}
+
+case $1 in
+    "apogee")
+        killprog node mrt
+        killprog node meteor
+        ;;
+    "azkaban"|"bolide"|"boggart"|"nurmengard")
+        killprog node $1
+        ;;
+    "startTests")
+        killprog bash $1
+        ;;
+    "apps")
+        killprog node mrt
+        killprog node meteor
+        killprog node azkaban
+        killprog node bolide
+        killprog node boggart
+        killprog node nurmengard
+        ;;
+    "mongo")
+        pkill mongo;;
+    "redis")
+        pkill redis;;
+    *)
+        echo "Unknown service $1"
+        exit 1
+esac
