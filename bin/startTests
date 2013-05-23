@@ -23,6 +23,7 @@ case $1 in
 esac
 
 echo Using METEOR_MOCHA_TEST_DIRS $METEOR_MOCHA_TEST_DIRS
+export METEOR_MOCHA_TEST_DIRS
 
 #Don't start persistence services, which may be running on your machine.
 if [ "$2" = "--apps" ]; then
