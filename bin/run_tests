@@ -1,3 +1,6 @@
+#! /bin/bash
 set -e
+
+basedir=`dirname $0`
 mocha-phantomjs $MADEYE_APOGEE_URL/tests
-coffee tests/testRunner.coffee
+$basedir/../node_modules/.bin/coffee tests/testRunner.coffee
