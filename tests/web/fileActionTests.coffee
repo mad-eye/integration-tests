@@ -18,7 +18,6 @@ if Meteor.isClient
         assert.ok !error
         #console.log "created project:", result
         Deps.autorun (computation)->
-          console.log "AUTORUNNIN'"
           if Files.find({projectId: result.projectId}).count() == files.length
             computation.stop()
             callback result
@@ -29,15 +28,14 @@ if Meteor.isClient
     #callback: (projectId) ->
     connectDementor = (projectId, callback) ->
       Meteor.http.post "#{Meteor.settings.public.boggartUrl}/socket/#{projectId}", (error, response) ->
-        console.log "Returning from opening socket."
         console.error "open socket:", error.message if error
         assert.isNull error, "Unexpected error:", error
-        console.log "Got response from POST socket."
+        #console.log "Got response from POST socket."
         callback response
 
     disconnectDementor = (projectId, callback) ->
       Meteor.http.del "#{Meteor.settings.public.boggartUrl}/socket/#{projectId}", (error, response) ->
-        console.log "Got response from DELETE socket with error:", error
+        #console.log "Got response from DELETE socket with error:", error
         callback()
 
 
@@ -48,7 +46,7 @@ if Meteor.isClient
         headers: {'Content-Type':'application/json'}
       }, (error, response) ->
         assert.isNull error
-        console.log "Got response from POST file."
+        #console.log "Got response from POST file."
         callback()
         
     addDementorFiles = (files, callback) ->
@@ -57,7 +55,7 @@ if Meteor.isClient
         headers: {'Content-Type':'application/json'}
       }, (error, response) ->
         assert.isNull error
-        console.log "Got response from POST files."
+        #console.log "Got response from POST files."
         callback()
       
 
@@ -68,7 +66,7 @@ if Meteor.isClient
       }, (error, response) ->
         assert.isNull error
         assert.ok response.data
-        console.log "Got response from GET file:", response.data
+        #console.log "Got response from GET file:", response.data
         callback(response.data)
 
     describe "File Actions", ->
