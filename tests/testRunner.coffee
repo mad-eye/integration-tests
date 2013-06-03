@@ -19,8 +19,8 @@ startDementor = (clean, callback)->
     if match = regex.exec(data)
       callback match[0]
       goneOnce = true
-    else
-      console.log "NO MATCH"
+    #else
+      #console.log "NO MATCH"
   dementor.stderr.on "data", (data)->
     util.print "DEMENTOR STDERR: #{data}"
   dementor.on "exit", (code)->
@@ -30,10 +30,10 @@ startDementor = (clean, callback)->
     # console.log "Dementor exited with status #{code}"
 
 runCasper = (projectUrl, tests, callback) ->
-  console.log "SPAWNING CASPER PROCESS"
+  #console.log "SPAWNING CASPER PROCESS"
   process.env.PROJECT_URL = projectUrl
   casperJs = spawn "casperjs", ["test"].concat tests
-  console.log "CASPER SPAWNED"
+  #console.log "CASPER SPAWNED"
   casperJs.stdout.on "data", (data)->
     console.log "CASPERJS STDOUT #{data}"
   casperJs.stderr.on "data", (data)->
@@ -49,6 +49,6 @@ startDementor true, (projectUrl) ->
   runCasper projectUrl, ["tests/happyPathTest.coffee"], (code) ->
     return process.exit(code) if code
     startDementor false, (projectUrl) ->
-      console.log "STARTING CASPER"
+      #console.log "STARTING CASPER"
       runCasper projectUrl, ["tests/happyPathTest.coffee"], (code) ->
         process.exit(code)
