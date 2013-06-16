@@ -8,17 +8,21 @@ integrationDir=`dirname $basedir`
 apogeeTestDir=$integrationDir/apogee/tests
 webTestDir=$integrationDir/tests/web
 case $1 in
-  "apogee") METEOR_MOCHA_TEST_DIRS=$apogeeTestDir;;
+  "apogee")
+      METEOR_MOCHA_TEST_DIRS=$apogeeTestDir
+      shift;;
     
-  "web") METEOR_MOCHA_TEST_DIRS=$webTestDir;;
+  "web")
+      METEOR_MOCHA_TEST_DIRS=$webTestDir
+      shift;;
 
-  "all") METEOR_MOCHA_TEST_DIRS=$apogeeTestDir:$webTestDir;;
+  "all")
+      METEOR_MOCHA_TEST_DIRS=$apogeeTestDir:$webTestDir
+      shift;;
 
-  "none") METEOR_MOCHA_TEST_DIRS="";;
-
-  *)
-   echo "Unkown test type.  Should be apogee, web, all, or none"
-   exit 1;;
+  "none")
+      METEOR_MOCHA_TEST_DIRS=""
+      shift;;
 
 esac
 
@@ -26,7 +30,7 @@ echo Using METEOR_MOCHA_TEST_DIRS $METEOR_MOCHA_TEST_DIRS
 export METEOR_MOCHA_TEST_DIRS
 
 #Don't start persistence services, which may be running on your machine.
-if [ "$2" = "--apps" ]; then
+if [ "$1" = "--apps" ]; then
     FORMATION=--formation="mongo=0,redis=0,bolide=1,boggart=1,nurmengard=1,apogee=1,azkaban=1"
 fi
 
