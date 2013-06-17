@@ -4,6 +4,7 @@ if [ -z "$1" ]; then
     pkill node
     pkill redis
     pkill mongo
+    pkill nginx
     exit 0
 fi
 
@@ -34,6 +35,8 @@ case $1 in
         pkill mongo;;
     "redis")
         pkill redis;;
+    "nginx")
+	pkill nginx;;
     *)
         echo "Unknown service $1"
         exit 1
