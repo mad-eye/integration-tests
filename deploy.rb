@@ -69,19 +69,14 @@ class Deployer
     end
 
     def push_app(app)
-      zippedApp = "#{app}.zip"
-      local_cmd "zip -r #{zippedApp} #{app}"
-      puts "running scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}"
-      local_cmd "scp #{zippedApp} #{user}@#{hostname}:#{deploy_directory}"
-      cmd "cd #{deploy_directory} && unzip #{zippedApp}"
-      local_cmd "rm #{zippedApp}"
-      cmd "rm #{deploy_directory}/#{zippedApp}"
+      puts "running rsync -avz #{app} #{user}@#{hostname}:#{deploy_directory}/"
+      local_cmd "rsync -avz #{app} #{user}@#{hostname}:#{deploy_directory}/"
       cmd "cd #{deploy_directory}/#{app} && bin/install --production" unless app == "apogee"
     end
 
     def push_tests
-      local_cmd "rsync -rv tests/ #{user}@#{hostname}:#{deploy_directory}/tests/"
-      local_cmd "rsync -rv boggart/ #{user}@#{hostname}:#{deploy_directory}/boggart/"
+      local_cmd "rsync -avz tests/ #{user}@#{hostname}:#{deploy_directory}/tests/"
+      local_cmd "rsync -avz boggart/ #{user}@#{hostname}:#{deploy_directory}/boggart/"
       cmd "cd #{deploy_directory}/boggart && npm install -q"
     end
 
