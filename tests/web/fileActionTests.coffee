@@ -114,7 +114,7 @@ if Meteor.isClient
 
         newContents = "Run for the hills, little ducky."
 
-        before (done) ->          
+        before (done) ->
           editorState = setupEditor editorId
 
           createFakeProject [fileData], (result) ->
