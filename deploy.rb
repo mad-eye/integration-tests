@@ -72,6 +72,7 @@ class Deployer
       puts "running rsync -avz #{app} #{user}@#{hostname}:#{deploy_directory}/"
       local_cmd "rsync -avz #{app} #{user}@#{hostname}:#{deploy_directory}/"
       cmd "cd #{deploy_directory}/#{app} && bin/install --production" unless app == "apogee"
+      cmd "cd #{deploy_directory}/#{app} && mrt install" if app == "apogee"
     end
 
     def push_tests
@@ -85,8 +86,6 @@ class Deployer
       if include_tests
         test_tarfile = '/tmp/apogee_test.tar.gz'
       end
-      #HACK: Terrible hack.  but the first time we run it it cleans some things up.
-      puts cmd "cd #{deploy_directory}/apogee && mrt --help"
       puts cmd "cd #{deploy_directory}/apogee && mrt bundle #{tarfile}"
       puts cmd "cd #{deploy_directory} && tar -xf #{tarfile}"
       cmd "rm #{tarfile}"
