@@ -32,7 +32,7 @@ startDementor = (clean, callback)->
 runCasper = (projectUrl, tests, callback) ->
   #console.log "SPAWNING CASPER PROCESS"
   process.env.PROJECT_URL = projectUrl
-  casperJs = spawn "casperjs", ["test"].concat tests
+  casperJs = spawn "casperjs", ["--ignore-ssl-errors=yes", "test"].concat tests
   #console.log "CASPER SPAWNED"
   casperJs.stdout.on "data", (data)->
     console.log "CASPERJS STDOUT #{data}"
