@@ -9,7 +9,10 @@ if [ -z "$1" ]; then
 fi
 
 function killprog {
-    pgrep $1 | xargs ps | grep "$2" | awk '{print $1}' | xargs kill
+    psNum=`pgrep $1 | xargs ps | grep "$2" | awk '{print $1}'`
+    if [ -n "$psNum" ]; then
+        pgrep $1 | xargs ps | grep "$2" | awk '{print $1}' | xargs kill
+    fi
 }
 
 case $1 in
