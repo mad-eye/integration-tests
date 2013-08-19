@@ -6,7 +6,7 @@ basedir=`pwd`
 popd > /dev/null
 integrationDir=`dirname $basedir`
 
-for dir in apogee azkaban bolide dementor nurmengard madeye-common madeye-ops; do
+for dir in apogee azkaban bolide dementor madeye-common madeye-ops; do
     echo Executing $dir tests
     cd "$integrationDir/$dir"
     bin="bin"
