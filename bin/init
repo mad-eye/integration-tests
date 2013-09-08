@@ -23,7 +23,7 @@ fi
 (cd madeye-common && bin/init $production)
 (cd madeye-ops && bin/init $production)
 (cd boggart && bin/init $production)
-(cd nurmengard && bin/init $production)
+(cd madeye-dev && npm install --loglevel error)
 #No production, because we need mocha for integration tests.
 npm install -q
 
