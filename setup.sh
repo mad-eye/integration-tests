@@ -17,4 +17,4 @@ sudo puppet module install rtyler/jenkins
 
 sudo rsync -ruv /vagrant/madeye-ops/puppet/modules /usr/share/puppet
 
-sudo puppet apply -e "class {'appserver': environment => 'production'}"
+sudo puppet apply -e "class {'appserver': environment => 'custom', custom_madeye_host => '192.168.33.10', custom_mongo_host => 'localhost'}"
