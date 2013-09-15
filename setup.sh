@@ -8,6 +8,7 @@ sudo dpkg -i puppetlabs-release-precise.deb
 sudo apt-get update -qqy
 
 sudo apt-get install -y curl
+sudo apt-get install -y rsync
 sudo apt-get install -y puppet
 
 sudo puppet module install puppetlabs/ntp
