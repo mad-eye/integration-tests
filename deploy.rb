@@ -78,7 +78,7 @@ class Deployer
     def push_tests
       local_cmd "rsync -avz tests/ #{user}@#{hostname}:#{deploy_directory}/tests/"
       local_cmd "rsync -avz boggart/ #{user}@#{hostname}:#{deploy_directory}/boggart/"
-      cmd "cd #{deploy_directory}/boggart && npm install -q"
+      cmd "cd #{deploy_directory}/boggart && npm install --loglevel error"
     end
 
     def setup_apogee(include_tests=false)
