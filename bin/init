@@ -25,5 +25,5 @@ fi
 (cd boggart && bin/init $production)
 (cd madeye-dev && npm install --loglevel error)
 #No production, because we need mocha for integration tests.
-npm install -q
+npm install --loglevel error
 
