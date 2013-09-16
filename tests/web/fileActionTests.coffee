@@ -79,6 +79,7 @@ if Meteor.isClient
         file = null
         fileData =
           path : 'foo/load.txt'
+          orderingPath : 'foo/load.txt'
           isDir : false
           contents : 'A happy duck is a warm duck.'
           aceMode: ->
@@ -108,6 +109,7 @@ if Meteor.isClient
         file = null
         fileData =
           path : 'foo/save.txt'
+          orderingPath : 'foo/save.txt'
           isDir : false
           contents : 'A happy duck is a warm duck.'
           aceMode: ->
@@ -146,6 +148,7 @@ if Meteor.isClient
         file = null
         fileData =
           path : 'foo/revert.txt'
+          orderingPath : 'foo/revert.txt'
           isDir : false
           contents : 'Sometimes, ducky is gone.'
           aceMode: ->
