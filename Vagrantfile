@@ -48,6 +48,13 @@ Vagrant.configure("2") do |config|
   #   # Use VBoxManage to customize the VM. For example to change memory:
     vb.customize ["modifyvm", :id, "--memory", "4096"]
   end
+
+
+  # Uncomment to turn of shared folder for vmware
+  # config.vm.provider :vmware_fusion do |f, override|
+  #   override.vm.synced_folder ".", "/vagrant", disabled: true
+  # end
+
   #
   # View the documentation for the provider you're using for more
   # information on available options.
