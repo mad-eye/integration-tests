@@ -25,6 +25,7 @@ Meteor.startup ->
         Projects.remove {test: true}
         project = new Project
         project.test = true
+        project.name = 'testProject'
         project.save()
 
         files = addFiles project._id, files
