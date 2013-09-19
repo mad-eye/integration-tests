@@ -5,3 +5,4 @@ jenkins_templates/
 etcinit/production/
 etcinit/staging/
 screenshot.png
+deploy.tar.gz
