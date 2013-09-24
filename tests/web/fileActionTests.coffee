@@ -9,7 +9,7 @@ Meteor.startup ->
       insert: ->
         true
 
-    @summonDementor = (projectId)->
+    MadEye.summonDementor = (projectId)->
       requestFile: (fileId)->
         #TODO also set checksums..
         return {contents: files[fileId]}
