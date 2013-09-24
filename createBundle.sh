@@ -1,6 +1,10 @@
 #! /bin/sh
 set -e
 
+sudo puppet module install rtyler/jenkins
+sudo rsync -ruv madeye-ops/puppet/modules /usr/share/puppet
+sudo puppet apply -e "class {'appserver': environment => 'custom', custom_madeye_host => 'localhost', custom_madeye_url => 'http://localhost', custom_mongo_host => 'localhost'} include madeye_db"
+
 bin/init
 mkdir deploy
 cd apogee && mrt bundle bundle.tar.gz && cd ../
