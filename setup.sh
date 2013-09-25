@@ -27,3 +27,4 @@ sudo ln -s `pwd` /home/ubuntu/current-deploy
 sudo start azkaban
 sudo start apogee
 sudo start bolide
+sudo /etc/init.d/nginx restart
