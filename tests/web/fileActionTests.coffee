@@ -49,7 +49,6 @@ if Meteor.isClient
     project.test = true
     project.name = 'testProject'
     project.save()
-
     Session.set "projectId", project._id
     files = addFiles project._id, files
     return project
@@ -76,7 +75,6 @@ if Meteor.isClient
           orderingPath : 'foo/load.txt'
           isDir : false
           contents : 'A happy duck is a warm duck.'
-          aceMode: ->
 
         before (done)->
           window.editorState = setupEditor editorId
@@ -101,7 +99,6 @@ if Meteor.isClient
           orderingPath : 'foo/save.txt'
           isDir : false
           contents : 'A happy duck is a warm duck.'
-          aceMode: ->
 
         newContents = "Run for the hills, little ducky."
 
@@ -137,7 +134,6 @@ if Meteor.isClient
           orderingPath : 'foo/revert.txt'
           isDir : false
           contents : 'Sometimes, ducky is gone.'
-          aceMode: ->
 
         before (done) ->
           project = createFakeProject [fileData]
