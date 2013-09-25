@@ -1,3 +1,5 @@
+log = new MadEye.Logger 'fileActionTests'
+
 randomId = () ->
   return Math.floor( Math.random() * 1000000 + 1)
 
@@ -19,10 +21,12 @@ Meteor.startup ->
 
     Meteor.methods
       setFileContents: (fileId, contents)->
+        log.trace "Setting file #{fileId} contents to", contents
         files[fileId] = contents
         return contents #figure out what should be returned here..
 
       getFileContents: (fileId)->
+        log.trace "Getting file #{fileId} contents:", files[fileId]
         files[fileId]
 
       bulkSetContents: (map)->
@@ -112,8 +116,7 @@ if Meteor.isClient
             editorState.loadFile file, (err) ->
               assert.isNull err
               editorState.getEditor().setValue newContents
-              editorState.save()
-              done()
+              editorState.save done
 
         it "should replace the local file's content", (done) ->
           Meteor.call "getFileContents", file._id, (err, result)->
