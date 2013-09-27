@@ -88,10 +88,12 @@ if Meteor.isClient
           Meteor.call "setFileContents", file._id, fileData.contents, done
 
         it 'should set editor body to contents', (done) ->
-          editorState.loadFile file, (err) ->
-            assert.isNull err
-            assert.equal ace.edit(editorId).getValue(), fileData.contents
-            done()
+          Meteor.setTimeout ->
+            editorState.loadFile file, (err) ->
+              assert.isNull err
+              assert.equal ace.edit(editorId).getValue(), fileData.contents
+              done()
+          , 200
 
       describe 'on save file', ->
         editorState = null
