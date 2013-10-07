@@ -88,12 +88,12 @@ if Meteor.isClient
           Meteor.call "setFileContents", file._id, fileData.contents, done
 
         it 'should set editor body to contents', (done) ->
-          Meteor.setTimeout ->
-            editorState.loadFile file, (err) ->
-              assert.isNull err
-              assert.equal ace.edit(editorId).getValue(), fileData.contents
-              done()
-          , 200
+          editorState.editor._editor.on "change", ->
+            assert.equal ace.edit(editorId).getValue(), fileData.contents
+            done()
+          editorState.loadFile file, (err) ->
+            #TODO its possible this assert is unenforced..
+            assert.isNull err
 
       describe 'on save file', ->
         editorState = null
