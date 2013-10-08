@@ -49,10 +49,16 @@ Vagrant.configure("2") do |config|
   end
 
 
-  # Uncomment to turn of shared folder for vmware
-  # config.vm.provider :vmware_fusion do |f, override|
-  #   override.vm.synced_folder ".", "/vagrant", disabled: true
-  # end
+
+  config.vm.provider :vmware_fusion do |f, override|
+    # Uncomment to turn of shared folder for vmware
+    #override.vm.synced_folder ".", "/vagrant", disabled: true
+  end
+
+  config.vm.provider "vmware_fusion" do |v|
+    v.vmx["memsize"] = "1024"
+    v.vmx["numvcpus"] = "2"
+  end
 
   #
   # View the documentation for the provider you're using for more
