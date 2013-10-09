@@ -4,7 +4,7 @@ set -e
 #Update and check for changes
 git checkout develop
 git pull
-for dir in apogee azkaban bolide dementor madeye-common madeye-ops nurmengard hermione; do
+for dir in apogee azkaban bolide dementor madeye-common madeye-ops hermione; do
     echo Entering $dir
     pushd $dir >/dev/null
     git fetch
