@@ -84,11 +84,11 @@ class Deployer
       if include_tests
         test_tarfile = '/tmp/apogee_test.tar.gz'
       end
-      puts cmd "cd #{deploy_directory}/apogee && mrt bundle #{tarfile}"
+      puts cmd "cd #{deploy_directory}/apogee && meteor bundle #{tarfile}"
       puts cmd "cd #{deploy_directory} && tar -xf #{tarfile}"
       cmd "rm #{tarfile}"
       if include_tests
-        puts cmd "cd #{deploy_directory}/apogee && export METEOR_MOCHA_TEST_DIRS=/home/ubuntu/#{deploy_directory}/tests/web && mrt bundle #{test_tarfile}"
+        puts cmd "cd #{deploy_directory}/apogee && export METEOR_MOCHA_TEST_DIRS=/home/ubuntu/#{deploy_directory}/tests/web && meteor bundle #{test_tarfile}"
         puts cmd "cd /tmp && tar -xf #{test_tarfile} && mv /tmp/bundle /home/ubuntu/#{deploy_directory}/bundle-test"
       end
     end
