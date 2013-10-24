@@ -87,7 +87,7 @@ class Deployer
       puts cmd "cd #{deploy_directory}/apogee && meteor bundle #{tarfile}"
       puts cmd "cd #{deploy_directory} && tar -xf #{tarfile}"
       #TODO should probably specify a specific version, why is this even necessary
-      puts cmd "cd #{deploy_directory}/bundle/server && npm install fibers" 
+      puts cmd "cd #{deploy_directory}/bundle/server && npm install fibers@1.0.1"
       cmd "rm #{tarfile}"
       if include_tests
         puts cmd "cd #{deploy_directory}/apogee && export METEOR_MOCHA_TEST_DIRS=/home/ubuntu/#{deploy_directory}/tests/web && meteor bundle #{test_tarfile}"
