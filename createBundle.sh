@@ -1,4 +1,5 @@
 #! /bin/sh
+set -e
 
 wget http://apt.puppetlabs.com/puppetlabs-release-precise.deb
 sudo dpkg -i puppetlabs-release-precise.deb
@@ -21,7 +22,7 @@ sudo puppet apply -e "class {'appserver': environment => 'custom', custom_madeye
 
 bin/init
 mkdir deploy
-cd apogee && mrt bundle bundle.tar.gz && cd ../
+cd apogee && mrt install && meteor bundle bundle.tar.gz && cd ../
 tar -xf apogee/bundle.tar.gz
 cp -r bundle deploy
 rm -r bundle

@@ -16,9 +16,6 @@
 [submodule "madeye-ops"]
 	path = madeye-ops
 	url = git@github.com:mad-eye/madeye-ops.git
-[submodule "nurmengard"]
-	path = nurmengard
-	url = git@github.com:mad-eye/nurmengard.git
 [submodule "hermione"]
 	path = hermione
 	url = git@github.com:mad-eye/hermione.git

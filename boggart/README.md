@@ -1,4 +1,0 @@
-BOGGART
-=======
-
-A mock Dementor.

@@ -31,7 +31,7 @@ export METEOR_MOCHA_TEST_DIRS
 
 #Don't start persistence services, which may be running on your machine.
 if [ "$1" = "--apps" ]; then
-    FORMATION=--formation="mongo=0,redis=0,bolide=1,boggart=1,nurmengard=1,apogee=1,azkaban=1"
+    FORMATION=--formation="mongo=0,redis=0,bolide=1,apogee=1,azkaban=1"
 fi
 
 echo Using FORMATION $FORMATION

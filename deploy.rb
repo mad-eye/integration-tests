@@ -77,8 +77,6 @@ class Deployer
 
     def push_tests
       local_cmd "rsync -avz tests/ #{user}@#{hostname}:#{deploy_directory}/tests/"
-      local_cmd "rsync -avz boggart/ #{user}@#{hostname}:#{deploy_directory}/boggart/"
-      cmd "cd #{deploy_directory}/boggart && npm install --loglevel error"
     end
 
     def setup_apogee(include_tests=false)
@@ -86,11 +84,13 @@ class Deployer
       if include_tests
         test_tarfile = '/tmp/apogee_test.tar.gz'
       end
-      puts cmd "cd #{deploy_directory}/apogee && mrt bundle #{tarfile}"
+      puts cmd "cd #{deploy_directory}/apogee && meteor bundle #{tarfile}"
       puts cmd "cd #{deploy_directory} && tar -xf #{tarfile}"
+      #TODO should probably specify a specific version, why is this even necessary
+      puts cmd "cd #{deploy_directory}/bundle/server && npm install fibers@1.0.1"
       cmd "rm #{tarfile}"
       if include_tests
-        puts cmd "cd #{deploy_directory}/apogee && export METEOR_MOCHA_TEST_DIRS=/home/ubuntu/#{deploy_directory}/tests/web && mrt bundle #{test_tarfile}"
+        puts cmd "cd #{deploy_directory}/apogee && export METEOR_MOCHA_TEST_DIRS=/home/ubuntu/#{deploy_directory}/tests/web && meteor bundle #{test_tarfile}"
         puts cmd "cd /tmp && tar -xf #{test_tarfile} && mv /tmp/bundle /home/ubuntu/#{deploy_directory}/bundle-test"
       end
     end

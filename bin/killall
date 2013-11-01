@@ -20,7 +20,7 @@ case $1 in
         killprog node mrt
         killprog node meteor
         ;;
-    "azkaban"|"bolide"|"boggart"|"nurmengard")
+    "azkaban"|"bolide")
         killprog node $1
         ;;
     "startTests")
@@ -31,8 +31,6 @@ case $1 in
         killprog node meteor
         killprog node azkaban
         killprog node bolide
-        killprog node boggart
-        killprog node nurmengard
         ;;
     "mongo")
         pkill mongo;;
