@@ -84,6 +84,7 @@ class Deployer
       if include_tests
         test_tarfile = '/tmp/apogee_test.tar.gz'
       end
+      puts cmd "sudo rsync -rc #{deploy_directory}/apogee/public/ /var/www/"
       puts cmd "cd #{deploy_directory}/apogee && meteor bundle #{tarfile}"
       puts cmd "cd #{deploy_directory} && tar -xf #{tarfile}"
       #TODO should probably specify a specific version, why is this even necessary
