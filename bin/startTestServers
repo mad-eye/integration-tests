@@ -5,23 +5,23 @@ basedir=`pwd`
 popd > /dev/null
 integrationDir=`dirname $basedir`
 
-apogeeTestDir=$integrationDir/apogee/tests
+apogeeDir=$integrationDir/apogee
 webTestDir=$integrationDir/tests/web
 case $1 in
   "apogee")
-      METEOR_MOCHA_TEST_DIRS=$apogeeTestDir
+      METEOR_MOCHA_TEST=true
+      cd $apogeeDir && [ -e zTests ] && rm zTests
+      cd $apogeeDir && ln -s tests zTests
       shift;;
     
   "web")
-      METEOR_MOCHA_TEST_DIRS=$webTestDir
-      shift;;
-
-  "all")
-      METEOR_MOCHA_TEST_DIRS=$apogeeTestDir:$webTestDir
+      METEOR_MOCHA_TEST=true
+      cd $apogeeDir && [ -e zTests ] && rm zTests
+      cd $apogeeDir && ln -s ../tests/web zTests
       shift;;
 
   "none")
-      METEOR_MOCHA_TEST_DIRS=""
+      cd $apogeeDir && [ -e zTests ] && rm zTests
       shift;;
 
 esac
@@ -36,4 +36,3 @@ fi
 
 echo Using FORMATION $FORMATION
 cd $basedir/../apogee && foreman start $FORMATION
-
