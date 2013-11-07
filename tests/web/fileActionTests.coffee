@@ -1,4 +1,4 @@
-log = new MadEye.Logger 'fileActionTests'
+log = new Logger 'fileActionTests'
 
 randomId = () ->
   return Math.floor( Math.random() * 1000000 + 1)
