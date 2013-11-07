@@ -91,7 +91,9 @@ class Deployer
       puts cmd "cd #{deploy_directory}/bundle/server && npm install fibers@1.0.1"
       cmd "rm #{tarfile}"
       if include_tests
-        puts cmd "cd #{deploy_directory}/apogee && ln -s ../tests/web zTests && export METEOR_MOCHA_TEST=true && meteor bundle #{test_tarfile}"
+        puts "running rsync -avz tests/web #{user}@#{hostname}:#{deploy_directory}/apogee/zTests"
+        local_cmd "rsync -avz tests/web #{user}@#{hostname}:#{deploy_directory}/apogee/zTests"
+        puts cmd "cd #{deploy_directory}/apogee && export METEOR_MOCHA_TEST=true && meteor bundle #{test_tarfile}"
         puts cmd "cd /tmp && tar -xf #{test_tarfile} && mv /tmp/bundle /home/ubuntu/#{deploy_directory}/bundle-test"
       end
     end
