@@ -153,7 +153,7 @@ if Meteor.isClient
               #give some time for this text to be inserted in shareJS
               Meteor.setTimeout ->
                 editorState.revertFile done
-              , 250
+              , 350
 
         it "should revert the editor's content to the original", ->
           assert.equal ace.edit(editorId).getValue(), fileData.contents
