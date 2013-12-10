@@ -36,12 +36,10 @@ Meteor.startup ->
 if Meteor.isClient
   addFiles = (projectId, files=[]) ->
     savedFiles = []
+    defaultFile = {isDir: false, modified: false}
     for f in files
-      file = new MadEye.File f
-      file.projectId =  projectId
-      file.modified_locally = f.modified_locally ? false
-      file.isDir = f.isDir ? false
-      file.modified = f.modified ? false
+      file = new MadEye.File _.extend(defaultFile, f)
+      file.projectId = projectId
       file.save()
       savedFiles.push file
     return savedFiles
@@ -95,22 +93,23 @@ if Meteor.isClient
             #TODO its possible this assert is unenforced..
             assert.isNull err
 
-      describe 'on save file', ->
+      describe 'on save file fweep', ->
         editorState = null
         editorId = "editor" + randomId()
 
         file = null
+        filePath = "foo/save#{randomId()}.txt"
         fileData =
-          path : 'foo/save.txt'
-          orderingPath : 'foo/save.txt'
+          path : filePath
+          orderingPath : filePath
           isDir : false
+          modified: true
           contents : 'A happy duck is a warm duck.'
 
         newContents = "Run for the hills, little ducky."
 
         before (done) ->
           editorState = setupEditor editorId
-
           project = createFakeProject [fileData]
           file = Files.findOne path: fileData.path
           projectId = project._id
@@ -124,10 +123,6 @@ if Meteor.isClient
           Meteor.call "getFileContents", file._id, (err, result)->
             assert.equal result, newContents
             done()
-
-        it "should mark the file as unmodified", ->
-          file = Files.findOne path: fileData.path
-          assert.isFalse file.modified
 
       describe 'on revert file', ->
         editorState = null
