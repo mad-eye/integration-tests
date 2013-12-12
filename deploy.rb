@@ -80,9 +80,9 @@ class Deployer
     end
 
     def setup_apogee(include_tests=false)
-      tarfile = '/tmp/apogee.tar.gz'
+      tarfile = '/tmp/apogee.tar'
       if include_tests
-        test_tarfile = '/tmp/apogee_test.tar.gz'
+        test_tarfile = '/tmp/apogee_test.tar'
       end
       puts cmd "cd #{deploy_directory}/apogee && meteor bundle #{tarfile}"
       puts cmd "cd #{deploy_directory} && tar -xf #{tarfile}"
