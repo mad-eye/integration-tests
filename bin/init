@@ -25,4 +25,6 @@ fi
 (cd madeye-dev && npm install --loglevel error)
 #No production, because we need mocha for integration tests.
 npm install --loglevel error
+#Generate static pages for apogee
+grunt
 
