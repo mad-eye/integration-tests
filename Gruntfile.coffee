@@ -20,15 +20,13 @@ module.exports = (grunt) ->
 
   webFiles = {}
   for page in ['home', 'get-started', 'tos', 'faq']
-    pages = ''
-    pages = 'pages/' unless page in ['home', 'get-started']
-    webFiles["#{PUBLIC_DIR}/#{pages}#{page}.html"] = ['/tmp/header.html', "/tmp/#{page}.html", '/tmp/footer.html']
+    webFiles["#{PUBLIC_DIR}/pages/#{page}.html"] = ['/tmp/header.html', "/tmp/#{page}.html", '/tmp/footer.html']
 
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
 
     less:
-      static:
+      html:
         options:
           cleancss: !isDevelopmentEnv
         files:
@@ -40,9 +38,19 @@ module.exports = (grunt) ->
       html:
         files: webFiles
 
+    hashres:
+      options:
+        encoding: 'utf8',
+        fileNameFormat: '${name}.${ext}?${hash}',
+        renameFiles: false
+      html:
+        src: ["#{PUBLIC_DIR}/static/styles/home.css"]
+        dest: "#{PUBLIC_DIR}/pages/*.html"
+
 
   grunt.loadNpmTasks 'grunt-contrib-less'
+  grunt.loadNpmTasks 'grunt-hashres'
   grunt.loadNpmTasks 'grunt-renderer'
   grunt.loadNpmTasks 'grunt-contrib-concat'
 
-  grunt.registerTask 'default', ['less', 'renderer', 'concat']
+  grunt.registerTask 'default', ['less', 'renderer', 'concat', 'hashres']
