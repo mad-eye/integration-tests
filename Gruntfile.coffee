@@ -5,6 +5,7 @@ isDevelopmentEnv = !!process.env.MADEYE_DEBUG
 
 templateData =
   "googleAnalyticsId" : process.env.MADEYE_GOOGLE_ANALYTICS_ID
+  "mixPanelToken" : process.env.MADEYE_MIXPANEL_TOKEN
   "staticPrefix": ""
 
 module.exports = (grunt) ->
