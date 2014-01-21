@@ -1,4 +1,4 @@
-LESS_SOURCE_DIR="apogee/client/styles"
+SASS_SOURCE_DIR="apogee/private/styles"
 HTML_SOURCE_DIR="apogee/private/pages"
 PUBLIC_DIR="apogee/public"
 isDevelopmentEnv = !!process.env.MADEYE_DEBUG
@@ -10,7 +10,7 @@ templateData =
 
 module.exports = (grunt) ->
 
-  webTemplates = ['header', 'footer', 'home', 'get-started', 'tos', 'faq']
+  webTemplates = ['header', 'footer', 'home', 'tos', 'faq']
   renderTasks = {}
   for name in webTemplates
     renderTasks[name] =
@@ -26,12 +26,10 @@ module.exports = (grunt) ->
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
 
-    less:
-      html:
-        options:
-          cleancss: !isDevelopmentEnv
+    sass:
+      dist:
         files:
-          "apogee/public/static/styles/home.css": ["#{LESS_SOURCE_DIR}/base.less", "#{LESS_SOURCE_DIR}/index.less", "#{LESS_SOURCE_DIR}/home.less"]
+          "apogee/public/static/styles/main.css": "#{SASS_SOURCE_DIR}/main.scss"
 
     renderer: renderTasks
 
@@ -49,9 +47,9 @@ module.exports = (grunt) ->
         dest: "#{PUBLIC_DIR}/pages/*.html"
 
 
-  grunt.loadNpmTasks 'grunt-contrib-less'
+  grunt.loadNpmTasks 'grunt-contrib-sass'
   grunt.loadNpmTasks 'grunt-hashres'
   grunt.loadNpmTasks 'grunt-renderer'
   grunt.loadNpmTasks 'grunt-contrib-concat'
 
-  grunt.registerTask 'default', ['less', 'renderer', 'concat', 'hashres']
+  grunt.registerTask 'default', ['sass', 'renderer', 'concat', 'hashres']
