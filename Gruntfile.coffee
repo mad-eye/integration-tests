@@ -46,7 +46,14 @@ module.exports = (grunt) ->
         src: ["#{PUBLIC_DIR}/static/styles/main.css"]
         dest: "#{PUBLIC_DIR}/pages/*.html"
 
+    watch:
+      scripts:
+        files: ["#{HTML_SOURCE_DIR}/*.html.hbs", "#{SASS_SOURCE_DIR}/*scss"]
+        tasks: ['default']
+        options:
+          spawn: false
 
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks 'grunt-contrib-sass'
   grunt.loadNpmTasks 'grunt-hashres'
   grunt.loadNpmTasks 'grunt-renderer'
