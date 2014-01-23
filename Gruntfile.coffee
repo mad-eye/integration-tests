@@ -43,7 +43,7 @@ module.exports = (grunt) ->
         fileNameFormat: '${name}.${ext}?${hash}',
         renameFiles: false
       html:
-        src: ["#{PUBLIC_DIR}/static/styles/home.css"]
+        src: ["#{PUBLIC_DIR}/static/styles/main.css"]
         dest: "#{PUBLIC_DIR}/pages/*.html"
 
 
