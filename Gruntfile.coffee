@@ -4,9 +4,12 @@ PUBLIC_DIR="apogee/public"
 isDevelopmentEnv = !!process.env.MADEYE_DEBUG
 
 templateData =
-  "googleAnalyticsId" : process.env.MADEYE_GOOGLE_ANALYTICS_ID
-  "mixPanelToken" : process.env.MADEYE_MIXPANEL_TOKEN
-  "staticPrefix": ""
+  googleAnalyticsId : process.env.MADEYE_GOOGLE_ANALYTICS_ID
+  mixPanelToken : process.env.MADEYE_MIXPANEL_TOKEN
+  apiUrl : process.env.MADEYE_API_URL || "/api"
+  staticPrefix: ""
+
+console.log "Using templateData", templateData
 
 module.exports = (grunt) ->
 
@@ -20,7 +23,7 @@ module.exports = (grunt) ->
         data: templateData
 
   webFiles = {}
-  for page in ['home', 'get-started', 'tos', 'faq']
+  for page in ['home', 'tos', 'faq']
     webFiles["#{PUBLIC_DIR}/pages/#{page}.html"] = ['/tmp/header.html', "/tmp/#{page}.html", '/tmp/footer.html']
 
   grunt.initConfig
