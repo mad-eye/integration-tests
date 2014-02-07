@@ -13,7 +13,7 @@ console.log "Using templateData", templateData
 
 module.exports = (grunt) ->
 
-  webTemplates = ['header', 'footer', 'home', 'tos', 'faq']
+  webTemplates = ['header', 'footer', 'home', 'tos', 'faq', 'docs']
   renderTasks = {}
   for name in webTemplates
     renderTasks[name] =
@@ -23,7 +23,7 @@ module.exports = (grunt) ->
         data: templateData
 
   webFiles = {}
-  for page in ['home', 'tos', 'faq']
+  for page in ['home', 'tos', 'faq', 'docs']
     webFiles["#{PUBLIC_DIR}/pages/#{page}.html"] = ['/tmp/header.html', "/tmp/#{page}.html", '/tmp/footer.html']
 
   grunt.initConfig
