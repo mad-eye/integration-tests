@@ -7,6 +7,10 @@ integrationDir=`dirname $basedir`
 
 apogeeDir=$integrationDir/apogee
 webTestDir=$integrationDir/tests/web
+
+MONGO_URL=$MADEYE_MONGO_URL
+MONGO_OPLOG_URL=$MADEYE_MONGO_OPLOG_URL
+
 case $1 in
   "apogee")
       METEOR_MOCHA_TEST=true
